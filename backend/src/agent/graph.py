@@ -40,23 +40,25 @@ class AITrendsReporter:
         )
         self.search_service = GoogleSearchService()
         
-        # Priority AI sources for better content quality
-        self.priority_ai_sources = [
-            "arxiv.org",
+        # Balanced AI sources - technical advancement and industry
+        self.diverse_ai_sources = [
+            # Technical/Research Sources (Higher Priority)
             "ai.googleblog.com",
             "openai.com",
             "blog.anthropic.com",
             "research.microsoft.com",
             "ai.meta.com",
             "deepmind.google",
-            "techcrunch.com",
-            "venturebeat.com",
-            "theinformation.com",
-            "github.com",
             "huggingface.co",
+            "github.com",
+            "arxiv.org",
             "papers.nips.cc",
-            "icml.cc",
-            "aaai.org"
+            # Industry News Sources
+            "techcrunch.com",
+            "venturebeat.com", 
+            "theinformation.com",
+            "technologyreview.mit.edu",
+            "spectrum.ieee.org"
         ]
     
     def generate_ai_weekly_queries(self, state: AgentState) -> AgentState:
@@ -70,25 +72,25 @@ class AITrendsReporter:
         
         Create specific queries for these categories:
         
-        1. Research & Breakthroughs (3 queries):
-           - New AI research papers and studies
-           - Scientific breakthroughs in machine learning
-           - Academic conference announcements
+        1. AI Technical Advancements & Features (4 queries):
+           - New AI model releases and capabilities (GPT, Claude, Gemini updates)
+           - AI feature announcements and technical improvements
+           - Research breakthroughs in machine learning and AI
+           - AI algorithm and architecture innovations
         
-        2. Product Launches (3 queries):
-           - New AI model releases (LLMs, vision, audio)
-           - AI tool and application launches
-           - Software framework updates
+        2. Company AI Research & Development (3 queries):
+           - Anthropic, OpenAI, Google AI research projects
+           - AI labs and research team announcements
+           - Technical blog posts and research publications
         
-        3. Industry News (3 queries):
-           - AI company announcements and partnerships
-           - Tech giant AI initiatives
-           - Startup news and pivots
+        3. AI Tools & Framework Development (3 queries):
+           - New AI development tools and SDKs
+           - Open source AI framework releases and updates
+           - AI API and platform announcements
         
-        4. Business & Investment (3 queries):
-           - AI startup funding rounds
-           - Acquisitions and mergers
-           - Market analysis and valuations
+        4. Business & Industry Applications (2 queries):
+           - AI implementation in specific industries
+           - AI adoption trends and market developments
         
         Requirements:
         - Include recent time indicators ("this week", "January 2025", "past 7 days")
@@ -104,20 +106,20 @@ class AITrendsReporter:
             queries = json.loads(response.content)
         except (json.JSONDecodeError, Exception) as e:
             logging.warning(f"Failed to parse queries from LLM: {e}")
-            # Comprehensive fallback queries
+            # Balanced queries focusing on technical advancements AND business
             queries = [
-                "artificial intelligence research breakthrough January 2025",
-                "new language model release this week 2025",
-                "machine learning paper arxiv past week",
-                "AI startup funding round announcement 2025",
-                "OpenAI Google AI Microsoft announcement past 7 days",
-                "deep learning framework update January 2025",
-                "computer vision breakthrough research 2025",
-                "AI regulation policy news this week",
-                "artificial intelligence acquisition merger January",
-                "LLM large language model release 2025",
-                "AI tool application launch past week",
-                "machine learning conference announcement 2025"
+                "OpenAI GPT new features release January 2025",
+                "Anthropic Claude AI capabilities update this week",
+                "Google Gemini model improvements announcement 2025",
+                "new AI research breakthrough machine learning past week",
+                "AI framework release open source January 2025",
+                "AI tool developer announcement new features 2025",
+                "artificial intelligence algorithm advancement research",
+                "AI model architecture innovation past 7 days",
+                "Meta AI LLaMA research update January 2025",
+                "AI startup funding technical development news",
+                "machine learning library update release notes",
+                "AI API platform new capabilities announcement"
             ]
         
         state["search_queries"] = queries
@@ -132,15 +134,13 @@ class AITrendsReporter:
         
         for query in state["search_queries"]:
             try:
-                # Search with priority sites first
-                priority_results = self.search_service.search_with_site_filters(
-                    query, self.priority_ai_sources
-                )
-                all_results.extend(priority_results)
+                # Use diverse source search instead of priority sites
+                diverse_results = self.search_service.search_with_diverse_sources(query)
+                all_results.extend(diverse_results)
                 
                 # Add a small delay to respect rate limits
                 import time
-                time.sleep(0.5)
+                time.sleep(1.0)  # Increased delay for API stability
                 
             except Exception as e:
                 logging.error(f"Error searching for query '{query}': {e}")
@@ -164,13 +164,13 @@ class AITrendsReporter:
         Content to analyze: {json.dumps(results_sample, indent=2)}
         
         Categorize into these sections:
-        1. BREAKTHROUGH_RESEARCH: Major research papers, scientific discoveries
-        2. PRODUCT_LAUNCHES: New AI models, tools, applications, features
-        3. INDUSTRY_NEWS: Company announcements, partnerships, strategic moves
-        4. FUNDING_INVESTMENT: Venture rounds, acquisitions, IPOs, valuations
-        5. REGULATORY_POLICY: Government policies, AI governance, ethics discussions
-        6. OPEN_SOURCE: New repositories, framework updates, community projects
-        7. TRENDING_DISCUSSIONS: Viral AI content, popular debates, social trends
+        1. AI_TECHNICAL_ADVANCES: New AI model features, capabilities, technical improvements
+        2. RESEARCH_BREAKTHROUGHS: Scientific discoveries, algorithm innovations, research papers
+        3. PRODUCT_LAUNCHES: New AI products, tools, applications, features
+        4. COMPANY_RESEARCH: AI labs research projects, technical blog posts, R&D announcements
+        5. OPEN_SOURCE: Framework releases, library updates, community projects
+        6. INDUSTRY_NEWS: Business developments, partnerships, strategic moves
+        7. FUNDING_INVESTMENT: Venture rounds, acquisitions, financial developments
         
         For each item, extract:
         - title: Clear, descriptive title
@@ -189,32 +189,73 @@ class AITrendsReporter:
         try:
             response = self.llm.invoke(prompt)
             categorized_content = json.loads(response.content)
+            
+            # Ensure we have proper structure and filter empty categories
+            cleaned_content = {}
+            for category, items in categorized_content.items():
+                if isinstance(items, list) and len(items) > 0:
+                    # Ensure each item has required fields
+                    valid_items = []
+                    for item in items:
+                        if isinstance(item, dict) and item.get('title') and item.get('summary'):
+                            valid_items.append(item)
+                    
+                    if valid_items:
+                        cleaned_content[category] = valid_items
+            
+            categorized_content = cleaned_content
+            
         except (json.JSONDecodeError, Exception) as e:
             logging.warning(f"Failed to categorize content: {e}")
-            # Fallback structure
-            categorized_content = {
-                "BREAKTHROUGH_RESEARCH": [],
-                "PRODUCT_LAUNCHES": [],
-                "INDUSTRY_NEWS": [],
-                "FUNDING_INVESTMENT": [],
-                "REGULATORY_POLICY": [],
-                "OPEN_SOURCE": [],
-                "TRENDING_DISCUSSIONS": []
+            # Create better fallback categorization from search results
+            categorized_content = self._create_fallback_categorization(results_sample)
+        
+        state["categorized_content"] = categorized_content
+        return state
+    
+    def _create_fallback_categorization(self, results_sample: List[Dict]) -> Dict:
+        """Create fallback categorization when LLM fails"""
+        categorized_content = {
+            "AI_TECHNICAL_ADVANCES": [],
+            "RESEARCH_BREAKTHROUGHS": [],
+            "PRODUCT_LAUNCHES": [],
+            "COMPANY_RESEARCH": [],
+            "OPEN_SOURCE": [],
+            "INDUSTRY_NEWS": []
+        }
+        
+        # Simple keyword-based categorization
+        for result in results_sample[:15]:
+            title = result.get("title", "").lower()
+            source = result.get("source", "").lower()
+            
+            item = {
+                "title": result.get("title", ""),
+                "summary": result.get("snippet", "")[:200] + "..." if result.get("snippet") else "",
+                "source": result.get("source", ""),
+                "url": result.get("url", ""),
+                "date": result.get("date", ""),
+                "impact_score": 5,
+                "relevance_tags": ["AI"],
+                "business_impact": "Potential impact on AI industry"
             }
             
-            # Try to create basic categorization from search results
-            for result in results_sample[:10]:
-                basic_item = {
-                    "title": result.get("title", ""),
-                    "summary": result.get("snippet", ""),
-                    "source": result.get("source", ""),
-                    "url": result.get("url", ""),
-                    "date": result.get("date", ""),
-                    "impact_score": 5,
-                    "relevance_tags": ["AI"],
-                    "business_impact": "Potential impact on AI industry"
-                }
-                categorized_content["INDUSTRY_NEWS"].append(basic_item)
+            # Categorize based on keywords and source
+            if any(tech in title for tech in ['feature', 'update', 'release', 'capabilities']):
+                categorized_content["AI_TECHNICAL_ADVANCES"].append(item)
+            elif any(research in title for research in ['research', 'paper', 'study', 'breakthrough']):
+                categorized_content["RESEARCH_BREAKTHROUGHS"].append(item)
+            elif 'github.com' in source or 'huggingface' in source:
+                categorized_content["OPEN_SOURCE"].append(item)
+            elif any(company in source for company in ['openai', 'anthropic', 'googleblog', 'microsoft']):
+                categorized_content["COMPANY_RESEARCH"].append(item)
+            elif any(tool in title for tool in ['tool', 'platform', 'api', 'sdk']):
+                categorized_content["PRODUCT_LAUNCHES"].append(item)
+            else:
+                categorized_content["INDUSTRY_NEWS"].append(item)
+        
+        # Remove empty categories
+        return {k: v for k, v in categorized_content.items() if v}
         
         state["categorized_content"] = categorized_content
         return state
@@ -230,69 +271,74 @@ class AITrendsReporter:
         Date Range: {date_range}
         Content: {json.dumps(categorized, indent=2)}
         
-        Generate a professional report with this structure:
+        Generate a professional report with this EXACT structure, but ONLY INCLUDE SECTIONS THAT HAVE CONTENT:
         
         # 🤖 AI Trends Weekly Report
         ## {date_range}
         
         ### 📊 Executive Summary
-        [3-4 bullet points highlighting the most significant developments of the week]
         
-        ### 🔬 Breakthrough Research
-        [Cover 2-3 most impactful research developments with clear explanations]
+        [Write 3-4 bullet points highlighting the most significant AI developments of the week - ALWAYS INCLUDE THIS SECTION]
         
-        ### 🚀 Product Launches & Updates
-        [New AI products, model releases, feature announcements]
+        ### 🚀 AI Technical Advances & New Features
         
-        ### 🏢 Industry Developments
-        [Company news, partnerships, strategic announcements]
+        [Cover latest AI model updates, feature releases, technical improvements - ONLY INCLUDE IF AI_TECHNICAL_ADVANCES has content]
         
-        ### 💰 Funding & Investment Activity
-        [Venture rounds, acquisitions, financial developments]
+        ### 🔬 Research Breakthroughs & Innovations
         
-        ### ⚖️ Policy & Regulatory Updates
-        [Government policies, regulatory changes, ethics discussions]
+        [Cover scientific discoveries, algorithm innovations, research papers - ONLY INCLUDE IF RESEARCH_BREAKTHROUGHS has content]
+        
+        ### 🛠️ New AI Tools & Products
+        
+        [Cover product launches, tool releases, platform updates - ONLY INCLUDE IF PRODUCT_LAUNCHES has content]
+        
+        ### 🏭 Company Research & Development
+        
+        [Cover AI labs projects, technical blog posts, R&D announcements - ONLY INCLUDE IF COMPANY_RESEARCH has content]
         
         ### 🔓 Open Source Highlights
-        [Notable open source releases, community projects]
         
-        ### 📈 What's Trending
-        [Popular discussions, viral AI content, emerging debates]
+        [Cover framework releases, library updates, community projects - ONLY INCLUDE IF OPEN_SOURCE has content]
+        
+        ### 🏢 Industry Developments
+        
+        [Cover business news, partnerships, strategic moves - ONLY INCLUDE IF INDUSTRY_NEWS has content]
+        
+        ### 💰 Funding & Investment Activity
+        
+        [Cover venture rounds, acquisitions, financial developments - ONLY INCLUDE IF FUNDING_INVESTMENT has content]
         
         ### 🔮 Looking Ahead
-        [Brief section on implications and what to watch next week]
         
-        Guidelines:
-        - Use markdown formatting for web display
-        - Include source links in format [Source Name](URL)
-        - Keep summaries concise but informative
-        - Focus on business and technical implications
-        - Highlight actionable insights
-        - Use emojis sparingly for section headers only
-        - Prioritize content by impact_score
-        - Include at least 10-15 distinct developments
-        - If a section has no content, mention "No major developments this week"
+        [Brief section on implications and what to watch next week - ALWAYS INCLUDE THIS SECTION]
         
-        Return only the markdown report content.
+        CRITICAL FORMATTING REQUIREMENTS:
+        - Use proper markdown headers (### for sections)
+        - Use bullet points (- or *) for lists within sections
+        - Include source links in format [Source Name](URL) 
+        - Each section should have 2-4 substantial bullet points
+        - DO NOT include section headers for empty categories
+        - If a category has no content, completely skip that section
+        - Keep content concise but informative
+        - Focus on technical details and business implications
+        - Ensure proper spacing between sections
+        - Use clean, readable markdown formatting
+        
+        Return ONLY the markdown report content with proper formatting.
         """
         
         try:
             response = self.llm.invoke(prompt)
             report_content = response.content
+            
+            # Validate that we have proper markdown structure
+            if not report_content.strip().startswith('#'):
+                logging.warning("Generated report doesn't start with proper markdown header")
+                report_content = self._create_fallback_report(categorized, date_range)
+                
         except Exception as e:
             logging.error(f"Failed to generate report: {e}")
-            report_content = f"""
-# 🤖 AI Trends Weekly Report
-## {date_range}
-
-### 📊 Executive Summary
-- Report generation encountered technical issues
-- Please check logs for more details
-- Retry report generation
-
-### Error Details
-{str(e)}
-"""
+            report_content = self._create_fallback_report(categorized, date_range)
         
         # Generate additional metadata
         report_metadata = self._generate_report_metadata(categorized)
@@ -303,19 +349,76 @@ class AITrendsReporter:
         
         return state
     
+    def _create_fallback_report(self, categorized: Dict, date_range: str) -> str:
+        """Create a fallback report when LLM generation fails"""
+        report = f"""# 🤖 AI Trends Weekly Report
+## {date_range}
+
+### 📊 Executive Summary
+
+* This week saw continued activity in AI development across multiple sectors
+* Several companies announced new AI capabilities and research initiatives  
+* Open source AI tools and frameworks continued to evolve
+* The AI landscape remains dynamic with both technical and business developments
+
+"""
+        
+        # Add sections based on available content
+        section_map = {
+            "AI_TECHNICAL_ADVANCES": "### 🚀 AI Technical Advances & New Features\n\n",
+            "RESEARCH_BREAKTHROUGHS": "### 🔬 Research Breakthroughs & Innovations\n\n", 
+            "PRODUCT_LAUNCHES": "### 🛠️ New AI Tools & Products\n\n",
+            "COMPANY_RESEARCH": "### 🏭 Company Research & Development\n\n",
+            "OPEN_SOURCE": "### 🔓 Open Source Highlights\n\n",
+            "INDUSTRY_NEWS": "### 🏢 Industry Developments\n\n"
+        }
+        
+        for category, items in categorized.items():
+            if category in section_map and items:
+                report += section_map[category]
+                for item in items[:3]:  # Limit to 3 items per section
+                    title = item.get('title', 'AI Development')
+                    summary = item.get('summary', 'New development in AI sector')
+                    source = item.get('source', 'Unknown')
+                    url = item.get('url', '#')
+                    
+                    report += f"* **{title[:100]}**: {summary[:200]}... [Source: {source}]({url})\n\n"
+        
+        report += """### 🔮 Looking Ahead
+
+* Expect continued developments in AI model capabilities and applications
+* Watch for new research publications and technical breakthroughs  
+* Monitor industry partnerships and strategic AI initiatives
+* Keep an eye on regulatory discussions and AI governance developments
+"""
+        
+        return report
+    
     def _filter_and_rank_results(self, results: List[Dict]) -> List[Dict]:
         """Filter and rank results by relevance and quality"""
-        # Remove results that are clearly not AI-related
+        # Enhanced AI keywords including technical terms
         ai_keywords = [
             'artificial intelligence', 'machine learning', 'deep learning',
             'neural network', 'AI', 'LLM', 'GPT', 'transformer',
             'computer vision', 'natural language', 'robotics',
-            'automation', 'algorithm', 'data science'
+            'automation', 'algorithm', 'data science', 'generative AI',
+            'foundation model', 'large language model', 'AI model',
+            'claude', 'gemini', 'chatgpt', 'anthropic', 'openai',
+            'multimodal', 'reasoning', 'reinforcement learning',
+            'diffusion model', 'embedding', 'fine-tuning', 'RAG'
         ]
+        
+        # Exclude domains we want to avoid
+        excluded_domains = ['reddit.com', 'quora.com', 'stackoverflow.com']
         
         filtered = []
         for result in results:
             text_content = f"{result.get('title', '')} {result.get('snippet', '')}".lower()
+            source = result.get('source', '').lower()
+            
+            # Skip excluded domains
+            if any(excluded in source for excluded in excluded_domains):
+                continue
             
             # Check if content contains AI-related keywords
             if any(keyword in text_content for keyword in ai_keywords):
@@ -324,9 +427,9 @@ class AITrendsReporter:
                 result['relevance_score'] = score
                 filtered.append(result)
         
-        # Sort by relevance score and take top 40 results
+        # Sort by relevance score and take top 30 results for better diversity
         filtered.sort(key=lambda x: x.get('relevance_score', 0), reverse=True)
-        return filtered[:40]
+        return filtered[:30]
     
     def _calculate_relevance_score(self, result: Dict, ai_keywords: List[str]) -> float:
         """Calculate relevance score for ranking"""
@@ -338,12 +441,18 @@ class AITrendsReporter:
             if keyword in text:
                 score += 1.0
         
-        # Source credibility boost
+        # Source credibility boost - prioritize technical sources
         source = result.get('source', '').lower()
-        if any(priority in source for priority in ['arxiv', 'googleblog', 'openai', 'anthropic']):
-            score += 3.0
+        if any(tech_source in source for tech_source in ['googleblog', 'openai', 'anthropic', 'microsoft', 'meta']):
+            score += 5.0  # Highest boost for AI company technical blogs
+        elif any(research in source for research in ['arxiv', 'papers.nips', 'deepmind']):
+            score += 4.0  # High boost for research sources
+        elif any(dev in source for dev in ['huggingface', 'github']):
+            score += 3.5  # High boost for development platforms
         elif any(news in source for news in ['techcrunch', 'venturebeat', 'theinformation']):
-            score += 2.0
+            score += 2.0  # Lower boost for business news
+        elif 'technologyreview.mit.edu' in source or 'spectrum.ieee.org' in source:
+            score += 3.0  # Technical journalism
         
         return score
     

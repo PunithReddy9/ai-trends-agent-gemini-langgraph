@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Download, Calendar, Sparkles, TrendingUp } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import './App.css';
 
 interface ReportMetadata {
   total_developments: number;
@@ -171,7 +172,7 @@ function App() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="flex flex-col sm:flex-row gap-4 items-center button-group">
               <Button 
                 onClick={generateReport} 
                 disabled={isGenerating}
@@ -225,7 +226,7 @@ function App() {
 
         {/* Report Metadata */}
         {report && report.metadata && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 metadata-grid">
             <Card className="border-0 shadow-md">
               <CardContent className="pt-6">
                 <div className="text-2xl font-bold text-blue-600">
@@ -268,39 +269,88 @@ function App() {
         {report && (
           <Card className="border-0 shadow-lg">
             <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
+              <CardTitle className="text-xl flex items-center gap-2 flex-wrap">
                 📋 Weekly AI Trends Report
                 {report.generated_at && (
-                  <span className="text-sm font-normal text-gray-500">
+                  <span className="text-sm font-normal text-gray-500 break-all">
                     Generated: {formatDate(report.generated_at)}
                   </span>
                 )}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="prose prose-lg max-w-none">
+              <div className="prose prose-lg max-w-none overflow-hidden">
                 <ReactMarkdown
                   components={{
-                    h1: ({ children }) => <h1 className="text-3xl font-bold mb-4 text-gray-900">{children}</h1>,
-                    h2: ({ children }) => <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-800">{children}</h2>,
-                    h3: ({ children }) => <h3 className="text-xl font-semibold mt-6 mb-3 text-gray-800">{children}</h3>,
-                    p: ({ children }) => <p className="mb-4 text-gray-700 leading-relaxed">{children}</p>,
-                    ul: ({ children }) => <ul className="mb-4 space-y-2 list-disc list-inside">{children}</ul>,
-                    li: ({ children }) => <li className="text-gray-700">{children}</li>,
+                    h1: ({ children }) => (
+                      <h1 className="text-3xl font-bold mb-4 text-gray-900 break-words">
+                        {children}
+                      </h1>
+                    ),
+                    h2: ({ children }) => (
+                      <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-800 break-words">
+                        {children}
+                      </h2>
+                    ),
+                    h3: ({ children }) => (
+                      <h3 className="text-xl font-semibold mt-6 mb-3 text-gray-800 break-words">
+                        {children}
+                      </h3>
+                    ),
+                    p: ({ children }) => (
+                      <p className="mb-4 text-gray-700 leading-relaxed break-words">
+                        {children}
+                      </p>
+                    ),
+                    ul: ({ children }) => (
+                      <ul className="mb-4 space-y-2 list-disc pl-6 ml-4">
+                        {children}
+                      </ul>
+                    ),
+                    ol: ({ children }) => (
+                      <ol className="mb-4 space-y-2 list-decimal pl-6 ml-4">
+                        {children}
+                      </ol>
+                    ),
+                    li: ({ children }) => (
+                      <li className="text-gray-700 break-words leading-relaxed mb-2 pl-1">
+                        {children}
+                      </li>
+                    ),
                     a: ({ href, children }) => (
                       <a 
                         href={href} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800 underline"
+                        className="text-blue-600 hover:text-blue-800 underline break-all"
                       >
                         {children}
                       </a>
                     ),
                     blockquote: ({ children }) => (
-                      <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-600 my-4">
+                      <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-600 my-4 break-words">
                         {children}
                       </blockquote>
+                    ),
+                    strong: ({ children }) => (
+                      <strong className="font-semibold text-gray-900">
+                        {children}
+                      </strong>
+                    ),
+                    em: ({ children }) => (
+                      <em className="italic text-gray-700">
+                        {children}
+                      </em>
+                    ),
+                    code: ({ children }) => (
+                      <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono break-all">
+                        {children}
+                      </code>
+                    ),
+                    pre: ({ children }) => (
+                      <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+                        {children}
+                      </pre>
                     ),
                   }}
                 >

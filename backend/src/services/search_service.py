@@ -75,6 +75,10 @@ class GoogleSearchService:
             # Research Sources
             "arxiv.org",
             "papers.nips.cc",
+            "news.mit.edu",
+            # AI Industry News & Analysis
+            "the-decoder.com",
+            "knowentry.com",
             # Technical Journalism
             "technologyreview.mit.edu",
             "spectrum.ieee.org",

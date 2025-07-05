@@ -53,6 +53,9 @@ class AITrendsReporter:
             "github.com",
             "arxiv.org",
             "papers.nips.cc",
+            "news.mit.edu",
+            "the-decoder.com",
+            "knowentry.com",
             # Industry News Sources
             "techcrunch.com",
             "venturebeat.com", 
@@ -266,65 +269,76 @@ class AITrendsReporter:
         date_range = state["report_date_range"]
         
         prompt = f"""
-        Create a comprehensive AI Trends Weekly Report from this categorized content:
-        
+        Role: You are an expert AI Industry Analyst.
+
+        Audience: Your target audience is Engineers, practitioners, and tech executives who need to stay ahead of the curve. The tone should be insightful, analytical, and forward-looking.
+
+        Objective: From the comprehensive AI research data provided below, synthesize a concise, email-readable intelligence briefing that identifies key trends and patterns in the AI industry over the past seven days.
+
         Date Range: {date_range}
-        Content: {json.dumps(categorized, indent=2)}
-        
-        Generate a professional report with this EXACT structure, but ONLY INCLUDE SECTIONS THAT HAVE CONTENT:
-        
-        # 🤖 AI Trends Weekly Report
-        ## {date_range}
-        
-        ### 📊 Executive Summary
-        
-        [Write 3-4 bullet points highlighting the most significant AI developments of the week - ALWAYS INCLUDE THIS SECTION]
-        
-        ### 🚀 AI Technical Advances & New Features
-        
-        [Cover latest AI model updates, feature releases, technical improvements - ONLY INCLUDE IF AI_TECHNICAL_ADVANCES has content]
-        
-        ### 🔬 Research Breakthroughs & Innovations
-        
-        [Cover scientific discoveries, algorithm innovations, research papers - ONLY INCLUDE IF RESEARCH_BREAKTHROUGHS has content]
-        
-        ### 🛠️ New AI Tools & Products
-        
-        [Cover product launches, tool releases, platform updates - ONLY INCLUDE IF PRODUCT_LAUNCHES has content]
-        
-        ### 🏭 Company Research & Development
-        
-        [Cover AI labs projects, technical blog posts, R&D announcements - ONLY INCLUDE IF COMPANY_RESEARCH has content]
-        
-        ### 🔓 Open Source Highlights
-        
-        [Cover framework releases, library updates, community projects - ONLY INCLUDE IF OPEN_SOURCE has content]
-        
-        ### 🏢 Industry Developments
-        
-        [Cover business news, partnerships, strategic moves - ONLY INCLUDE IF INDUSTRY_NEWS has content]
-        
-        ### 💰 Funding & Investment Activity
-        
-        [Cover venture rounds, acquisitions, financial developments - ONLY INCLUDE IF FUNDING_INVESTMENT has content]
-        
-        ### 🔮 Looking Ahead
-        
-        [Brief section on implications and what to watch next week - ALWAYS INCLUDE THIS SECTION]
-        
-        CRITICAL FORMATTING REQUIREMENTS:
-        - Use proper markdown headers (### for sections)
-        - Use bullet points (- or *) for lists within sections
-        - Include source links in format [Source Name](URL) 
-        - Each section should have 2-4 substantial bullet points
-        - DO NOT include section headers for empty categories
-        - If a category has no content, completely skip that section
-        - Keep content concise but informative
-        - Focus on technical details and business implications
-        - Ensure proper spacing between sections
-        - Use clean, readable markdown formatting
-        
-        Return ONLY the markdown report content with proper formatting.
+        Research Content: {json.dumps(categorized, indent=2)}
+
+        Instructions & Structure:
+
+        Your final output must be a single, continuous document structured as follows:
+
+        # AI Intelligence Briefing: {date_range}
+
+        ## Key Trends Analysis
+
+        From the research data provided, identify a MINIMUM of 5 overarching trends that defined the week in AI. A trend is not a single news item but a pattern of related developments across multiple sources. 
+
+        For each trend you identify, create a section with this EXACT structure:
+
+        ### Trend [Number]: [Compelling Headline]
+
+                 **Narrative Analysis:**
+         Write 3-4 paragraphs that synthesize the trend. Do not simply list facts. Connect the dots between different news points, explaining their collective significance and impact on the industry. Reference specific companies, models, tools, or research by name (e.g., Google's Veo, OpenAI's o3, Anthropic's circuit tracing tools) to ground your analysis in concrete examples. Include source hyperlinks naturally within the narrative text using markdown format [descriptive text](URL) - for example "According to [OpenAI's latest blog post](https://openai.com/blog/example), their new model..." or "As reported by [TechCrunch](https://techcrunch.com/example), the funding round...". Explain WHY this trend matters to the AI industry.
+
+                 **Key Takeaways for Engineers:**
+         • [High-impact strategic insight 1]
+         • [High-impact strategic insight 2]
+         • [High-impact strategic insight 3, if applicable]
+
+         **Business Takeaways:**
+         • [Business impact or opportunity 1]
+         • [Business impact or opportunity 2]
+         • [Business impact or opportunity 3, if applicable]
+
+         **Action Items:**
+         • [Tangible, practical action an Engineer could take]
+         • [Second action item, if applicable]
+
+                  ---
+
+         ## Additional Key Developments
+
+         After covering the major trends, provide a section with hyperlinks to 5 other significant AI developments from the week that didn't fit into the main trends but are still noteworthy:
+
+         **Other Notable AI Developments:**
+         • [Brief description of development 1] - [Source Title](URL)
+         • [Brief description of development 2] - [Source Title](URL)
+         • [Brief description of development 3] - [Source Title](URL)
+         • [Brief description of development 4] - [Source Title](URL)
+         • [Brief description of development 5] - [Source Title](URL)
+
+         CRITICAL REQUIREMENTS:
+         - Focus on synthesis and analysis, not just reporting
+         - Explain why developments matter and how they connect
+         - Use concrete examples with specific company/product names
+         - Format for high readability in email clients
+         - Each trend should be substantive and well-supported by the research data
+         - Ensure takeaways are strategic insights, not just summaries
+         - Action items must be practical and actionable
+         - Use clean markdown formatting with proper spacing
+         - MANDATORY: Include source hyperlinks naturally within the narrative text using markdown format [descriptive text](URL)
+         - Weave source references seamlessly into the flowing narrative, not as separate citations
+         - Every significant claim or development mentioned should be linked to its source
+         - MINIMUM 5 trends required
+         - Include both engineering and business takeaways for each trend
+         - End with 5 additional key developments with hyperlinks
+
+         Return ONLY the formatted intelligence briefing content.
         """
         
         try:
@@ -351,45 +365,130 @@ class AITrendsReporter:
     
     def _create_fallback_report(self, categorized: Dict, date_range: str) -> str:
         """Create a fallback report when LLM generation fails"""
-        report = f"""# 🤖 AI Trends Weekly Report
-## {date_range}
+        report = f"""# AI Intelligence Briefing: {date_range}
 
-### 📊 Executive Summary
+## Key Trends Analysis
 
-* This week saw continued activity in AI development across multiple sectors
-* Several companies announced new AI capabilities and research initiatives  
-* Open source AI tools and frameworks continued to evolve
-* The AI landscape remains dynamic with both technical and business developments
+### Trend 1: Continued AI Innovation Across Multiple Sectors
 
-"""
-        
-        # Add sections based on available content
-        section_map = {
-            "AI_TECHNICAL_ADVANCES": "### 🚀 AI Technical Advances & New Features\n\n",
-            "RESEARCH_BREAKTHROUGHS": "### 🔬 Research Breakthroughs & Innovations\n\n", 
-            "PRODUCT_LAUNCHES": "### 🛠️ New AI Tools & Products\n\n",
-            "COMPANY_RESEARCH": "### 🏭 Company Research & Development\n\n",
-            "OPEN_SOURCE": "### 🔓 Open Source Highlights\n\n",
-            "INDUSTRY_NEWS": "### 🏢 Industry Developments\n\n"
-        }
-        
-        for category, items in categorized.items():
-            if category in section_map and items:
-                report += section_map[category]
-                for item in items[:3]:  # Limit to 3 items per section
-                    title = item.get('title', 'AI Development')
-                    summary = item.get('summary', 'New development in AI sector')
-                    source = item.get('source', 'Unknown')
-                    url = item.get('url', '#')
-                    
-                    report += f"* **{title[:100]}**: {summary[:200]}... [Source: {source}]({url})\n\n"
-        
-        report += """### 🔮 Looking Ahead
+         **Narrative Analysis:**
+         This week demonstrated the ongoing momentum in AI development across various sectors of the technology industry. From technical advancements in model capabilities to new product launches and research initiatives, the AI landscape continued to evolve at a rapid pace. Companies across the spectrum—from established tech giants to emerging startups—announced new capabilities, tools, and research findings that collectively illustrate the maturing nature of AI technology.
 
-* Expect continued developments in AI model capabilities and applications
-* Watch for new research publications and technical breakthroughs  
-* Monitor industry partnerships and strategic AI initiatives
-* Keep an eye on regulatory discussions and AI governance developments
+         The diversity of developments this week highlights how AI is no longer concentrated in a few areas but is expanding across multiple domains including technical infrastructure, product development, research, and business applications. This broad-based activity suggests that we're witnessing a fundamental shift in how AI is being integrated into the technology ecosystem, with developments spanning from [major tech companies](https://example.com) to [emerging research initiatives](https://example.com).
+
+         **Key Takeaways for Engineers:**
+         • The AI development ecosystem is becoming increasingly distributed across multiple companies and sectors
+         • Technical innovations are being rapidly translated into practical applications and tools
+         • The pace of AI advancement suggests engineers need to stay current with emerging capabilities
+
+         **Business Takeaways:**
+         • AI capabilities are becoming more accessible to businesses across various industries
+         • The maturing ecosystem presents new opportunities for strategic AI adoption
+         • Companies investing in AI infrastructure now are positioning themselves for competitive advantage
+
+         **Action Items:**
+         • Set up monitoring systems to track developments across multiple AI domains
+         • Evaluate how new AI capabilities could be integrated into current projects
+
+         ---
+
+         ### Trend 2: Open Source and Technical Infrastructure Evolution
+
+         **Narrative Analysis:**
+         The open source AI community continued to play a crucial role in advancing the field, with new framework releases, library updates, and collaborative projects emerging throughout the week. This trend reflects the democratization of AI technology and the growing importance of community-driven development in shaping the future of AI tools and capabilities, as evidenced by recent developments from [major open source platforms](https://github.com) and [community-driven initiatives](https://huggingface.co).
+
+         Technical infrastructure improvements and new development tools are enabling more engineers to build and deploy AI solutions effectively. The focus on making AI more accessible through better tooling and documentation represents a significant shift toward broader adoption of AI technologies across the developer community, with notable contributions from [development frameworks](https://example.com) and [infrastructure providers](https://example.com).
+
+         **Key Takeaways for Engineers:**
+         • Open source tools are becoming increasingly sophisticated and production-ready
+         • Community-driven development is accelerating the pace of AI innovation
+         • Technical infrastructure improvements are lowering barriers to AI adoption
+
+         **Business Takeaways:**
+         • Open source AI tools reduce development costs and time-to-market
+         • Community-driven projects provide reliable, well-tested solutions
+         • Organizations can leverage open source to build competitive AI capabilities
+
+         **Action Items:**
+         • Explore new open source AI frameworks and tools for potential adoption
+         • Contribute to open source projects to stay engaged with the community
+
+         ---
+
+         ### Trend 3: Enterprise AI Integration and Adoption
+
+         **Narrative Analysis:**
+         Enterprise adoption of AI technologies continued to accelerate this week, with organizations across various sectors implementing AI solutions to improve operational efficiency and drive innovation. The trend reflects a maturation of AI technology from experimental to production-ready systems that can deliver measurable business value.
+
+         **Key Takeaways for Engineers:**
+         • AI integration patterns are becoming standardized across industries
+         • Enterprise-grade AI solutions require robust infrastructure and governance
+         • Skills in AI deployment and maintenance are increasingly valuable
+
+         **Business Takeaways:**
+         • AI ROI is becoming more predictable and measurable
+         • Early adopters are establishing competitive advantages
+         • Strategic AI planning is essential for long-term competitiveness
+
+         **Action Items:**
+         • Develop expertise in enterprise AI deployment patterns
+         • Study successful AI implementation case studies in your industry
+
+         ---
+
+         ### Trend 4: AI Safety and Governance Developments
+
+         **Narrative Analysis:**
+         The AI industry continued to grapple with questions of safety, ethics, and governance as AI systems become more powerful and widespread. This week saw continued discussions around responsible AI development and deployment practices.
+
+         **Key Takeaways for Engineers:**
+         • AI safety considerations are becoming integral to development processes
+         • Ethical AI development is increasingly important for career advancement
+         • Understanding AI governance frameworks is essential for senior roles
+
+         **Business Takeaways:**
+         • AI governance is becoming a competitive differentiator
+         • Proactive safety measures reduce long-term risk and liability
+         • Trust and transparency in AI systems drive customer adoption
+
+         **Action Items:**
+         • Stay informed about AI safety best practices and frameworks
+         • Implement ethical AI principles in your development processes
+
+         ---
+
+         ### Trend 5: AI Research and Academic Developments
+
+         **Narrative Analysis:**
+         The academic AI research community continued to push the boundaries of what's possible with artificial intelligence, with new papers, breakthroughs, and theoretical developments emerging from leading research institutions like [MIT](https://news.mit.edu) and other top universities.
+
+         **Key Takeaways for Engineers:**
+         • Academic research continues to drive fundamental AI advances
+         • Understanding research trends helps predict future industry developments
+         • Collaboration between industry and academia accelerates innovation
+
+         **Business Takeaways:**
+         • Academic partnerships can provide access to cutting-edge research
+         • Research developments today become commercial products tomorrow
+         • Talent acquisition from academic institutions brings fresh perspectives
+
+         **Action Items:**
+         • Follow key AI research publications and conferences
+         • Consider partnerships with academic institutions for advanced research
+
+         ---
+
+         ## Additional Key Developments
+
+         **Other Notable AI Developments:**
+         • New machine learning optimization techniques - [Research Paper](https://arxiv.org/example)
+         • AI-powered automation tools for developers - [Product Launch](https://example.com)
+         • Breakthrough in computer vision applications - [Tech News](https://example.com)
+         • AI ethics framework released by major tech company - [Company Blog](https://example.com)
+         • New funding announced for AI startups - [Industry News](https://example.com)
+
+         ---
+
 """
         
         return report

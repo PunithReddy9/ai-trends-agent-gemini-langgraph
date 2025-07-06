@@ -56,56 +56,58 @@ class GoogleSearchService:
             return []
     
     def search_with_diverse_sources(self, query: str, exclude_sources: List[str] = None) -> List[Dict]:
-        """Search with focus on diverse, high-quality sources"""
+        """Search with focus on diverse, high-quality sources using natural language terms"""
         if exclude_sources is None:
             exclude_sources = []
         
-        # Technical AI and research sources with balanced industry coverage
-        diverse_sources = [
-            # AI Company Technical Blogs (Highest Priority)
-            "ai.googleblog.com",
-            "openai.com/blog",
-            "blog.anthropic.com", 
-            "research.microsoft.com",
-            "ai.meta.com",
-            "deepmind.google",
+        # Natural language search terms for AI sources
+        natural_search_terms = {
+            # Technical/Research Sources
+            "ai.googleblog.com": ["Google AI research", "Google AI blog", "Google artificial intelligence"],
+            "openai.com": ["OpenAI research", "OpenAI announcements", "OpenAI ChatGPT updates"],
+            "blog.anthropic.com": ["Anthropic AI research", "Anthropic Claude updates", "Anthropic safety research"],
+            "research.microsoft.com": ["Microsoft AI research", "Microsoft research blog", "Microsoft AI announcements"],
+            "ai.meta.com": ["Meta AI research", "Facebook AI research", "Meta AI announcements"],
+            "deepmind.google": ["Google DeepMind research", "DeepMind AI research", "DeepMind announcements"],
+            "news.mit.edu": ["MIT AI news", "MIT research news", "MIT artificial intelligence"],
+            "the-decoder.com": ["AI news decoder", "AI industry news", "artificial intelligence news"],
+            "knowentry.com": ["AI industry analysis", "AI research insights", "AI technology news"],
             # Development & Open Source
-            "huggingface.co",
-            "github.com",
+            "huggingface.co": ["Hugging Face AI models", "Hugging Face research", "Hugging Face announcements"],
+            "github.com": ["GitHub AI projects", "GitHub research", "GitHub announcements"],
             # Research Sources
-            "arxiv.org",
-            "papers.nips.cc",
-            "news.mit.edu",
-            # AI Industry News & Analysis
-            "the-decoder.com",
-            "knowentry.com",
+            "arxiv.org": ["arXiv AI papers", "arXiv research papers", "arXiv artificial intelligence"],
+            "papers.nips.cc": ["NeurIPS papers", "NeurIPS research", "NeurIPS conference"],
             # Technical Journalism
-            "technologyreview.mit.edu",
-            "spectrum.ieee.org",
-            # Industry News (Secondary)
-            "techcrunch.com",
-            "venturebeat.com", 
-            "theinformation.com"
-        ]
-        
-        # Filter out excluded sources
-        sources_to_use = [s for s in diverse_sources if s not in exclude_sources]
+            "technologyreview.mit.edu": ["MIT Technology Review", "AI technology analysis", "emerging technology news"],
+            "spectrum.ieee.org": ["IEEE Spectrum AI", "engineering AI news", "technical AI news"],
+            # Industry News
+            "techcrunch.com": ["TechCrunch AI news", "startup AI news", "tech industry news"],
+            "venturebeat.com": ["VentureBeat AI news", "enterprise AI news", "AI business news"],
+            "theinformation.com": ["tech industry analysis", "AI business intelligence", "tech insider news"]
+        }
         
         all_results = []
         
-        # Search diverse sources first (limit to avoid rate limits)
-        for source in sources_to_use[:5]:  # Top 5 diverse sources
-            try:
-                site_query = f"{query} site:{source}"
-                results = self.search_ai_content(site_query)
-                all_results.extend(results)
-                
-                # Small delay to respect rate limits
-                time.sleep(0.3)
-                
-            except Exception as e:
-                logging.warning(f"Failed to search {source}: {e}")
+        # Search with natural language terms from various sources
+        for source, search_terms in natural_search_terms.items():
+            if source in exclude_sources:
                 continue
+                
+            # Use first search term for each source
+            for term in search_terms[:1]:
+                try:
+                    # Combine the query with the natural language term
+                    combined_query = f"{query} {term}"
+                    results = self.search_ai_content(combined_query)
+                    all_results.extend(results)
+                    
+                    # Small delay to respect rate limits
+                    time.sleep(0.3)
+                    
+                except Exception as e:
+                    logging.warning(f"Failed to search with term '{term}': {e}")
+                    continue
         
         # Add general search for broader coverage
         general_results = self.search_ai_content(query)

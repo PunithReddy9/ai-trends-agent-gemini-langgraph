@@ -9,7 +9,7 @@ import re
 class AITrendsReporter:
     def __init__(self, gemini_api_key: str):
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-2.0-flash-exp",
+            model="gemini-2.5-flash-002",
             api_key=gemini_api_key,
             temperature=0.1
         )

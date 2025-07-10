@@ -34,7 +34,7 @@ class AgentState(TypedDict):
 class AITrendsReporter:
     def __init__(self, gemini_api_key: str):
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-2.0-flash-exp",
+            model="gemini-2.5-flash",
             api_key=gemini_api_key,
             temperature=0.1
         )
@@ -67,30 +67,26 @@ class AITrendsReporter:
         week_ago = current_date - timedelta(days=7)
         
         prompt = f"""
-        Generate 12 diverse search queries to comprehensively cover AI developments from the past week 
+        Generate 8 diverse search queries to comprehensively cover AI developments from the past week 
         ({week_ago.strftime('%B %d')} to {current_date.strftime('%B %d, %Y')}).
         
         Create specific queries for these categories:
         
-        1. AI Technical Advancements & Features (4 queries):
+        1. AI Technical Advancements & Features (3 queries):
            - New AI model releases and capabilities (GPT, Claude, Gemini updates)
            - AI feature announcements and technical improvements
            - Research breakthroughs in machine learning and AI
-           - AI algorithm and architecture innovations
         
-        2. Company AI Research & Development (3 queries):
+        2. Company AI Research & Development (2 queries):
            - Anthropic, OpenAI, Google AI research projects
-           - AI labs and research team announcements
            - Technical blog posts and research publications
         
-        3. AI Tools & Framework Development (3 queries):
+        3. AI Tools & Framework Development (2 queries):
            - New AI development tools and SDKs
            - Open source AI framework releases and updates
-           - AI API and platform announcements
         
-        4. Business & Industry Applications (2 queries):
+        4. Business & Industry Applications (1 query):
            - AI implementation in specific industries
-           - AI adoption trends and market developments
         
         Requirements:
         - Include recent time indicators ("this week", "January 2025", "past 7 days")
@@ -114,12 +110,8 @@ class AITrendsReporter:
                 "new AI research breakthrough machine learning past week",
                 "AI framework release open source January 2025",
                 "AI tool developer announcement new features 2025",
-                "artificial intelligence algorithm advancement research",
-                "AI model architecture innovation past 7 days",
                 "Meta AI LLaMA research update January 2025",
-                "AI startup funding technical development news",
-                "machine learning library update release notes",
-                "AI API platform new capabilities announcement"
+                "AI startup funding technical development news"
             ]
         
         state["search_queries"] = queries

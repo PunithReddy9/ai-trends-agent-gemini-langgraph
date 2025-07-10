@@ -1,4 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from typing import List, Dict
+import json
 
 
 # Get current date in a readable format
@@ -165,3 +167,249 @@ User Question: {research_topic}
 
 Research Summaries:
 {summaries}"""
+
+
+def generate_ai_weekly_queries(self, state: AgentState) -> AgentState:
+    """Generate trend-focused search queries with developer perspective"""
+    current_date = datetime.now()
+    week_ago = current_date - timedelta(days=7)
+    
+    prompt = f"""
+    Generate search queries to identify AI TRENDS and PATTERNS, not just news items. 
+    Focus on developments that impact developers and engineers.
+    
+    Date Range: {week_ago.strftime('%B %d')} to {current_date.strftime('%B %d, %Y')}
+    
+    Create 15 strategic queries across these trend themes:
+    
+    1. AGENT ECOSYSTEM (3 queries):
+       - AI agents, autonomous systems, CUA (Computer Use Agents)
+       - Multi-agent workflows, agent frameworks, orchestration
+       - Focus: What new agent capabilities are emerging?
+    
+    2. AI CODING REVOLUTION (3 queries):
+       - AI coding assistants, code generation, pair programming
+       - Developer productivity tools, IDE integrations
+       - Focus: How is AI changing software development?
+    
+    3. MODEL CAPABILITIES & BREAKTHROUGHS (3 queries):
+       - New model releases, benchmarks, performance improvements
+       - Multimodal advances, reasoning capabilities
+       - Focus: What technical boundaries are being pushed?
+    
+    4. DEVELOPER TOOLS & APIS (3 queries):
+       - New APIs, SDKs, frameworks, libraries
+       - Integration patterns, deployment solutions
+       - Focus: What new tools can developers use TODAY?
+    
+    5. INDUSTRY SHIFTS & ADOPTION (3 queries):
+       - Enterprise AI adoption, job market changes
+       - Security concerns, ethical considerations
+       - Focus: How is AI reshaping the tech industry?
+    
+    Query Strategy:
+    - Use terms like "breakthrough", "launch", "release", "announces"
+    - Include company names: OpenAI, Anthropic, Google, Microsoft, Meta
+    - Mix technical and business perspectives
+    - Look for patterns across multiple developments
+    
+    Return EXACTLY 15 queries as a JSON array.
+    """
+
+
+def identify_trend_patterns(self, search_results: List[Dict]) -> Dict[str, List[Dict]]:
+    """Identify emerging trends and patterns across search results"""
+    
+    # Define trend themes to look for
+    trend_themes = {
+        "agent_revolution": {
+            "keywords": ["agent", "autonomous", "CUA", "operator", "mariner", "workflow"],
+            "companies": ["openai", "google", "microsoft", "mistral"],
+            "related_items": []
+        },
+        "ai_coding": {
+            "keywords": ["coding", "cursor", "copilot", "code generation", "developer", "IDE"],
+            "companies": ["github", "cursor", "replit", "codestral"],
+            "related_items": []
+        },
+        "model_evolution": {
+            "keywords": ["model", "benchmark", "performance", "capabilities", "multimodal"],
+            "companies": ["openai", "anthropic", "google", "deepseek"],
+            "related_items": []
+        },
+        "deepfake_concerns": {
+            "keywords": ["deepfake", "synthetic", "detection", "trust", "verification"],
+            "companies": ["resemble", "elevenlabs", "runway"],
+            "related_items": []
+        },
+        "enterprise_adoption": {
+            "keywords": ["enterprise", "adoption", "integration", "deployment", "scale"],
+            "companies": ["microsoft", "salesforce", "aws", "google cloud"],
+            "related_items": []
+        }
+    }
+    
+    # Analyze each result for trend signals
+    for result in search_results:
+        title = result.get("title", "").lower()
+        snippet = result.get("snippet", "").lower()
+        source = result.get("source", "").lower()
+        
+        for theme_name, theme_data in trend_themes.items():
+            # Check if result matches theme
+            keyword_match = any(kw in title + snippet for kw in theme_data["keywords"])
+            company_match = any(comp in title + snippet + source for comp in theme_data["companies"])
+            
+            if keyword_match or company_match:
+                theme_data["related_items"].append({
+                    **result,
+                    "theme_relevance": "high" if keyword_match and company_match else "medium"
+                })
+    
+    return trend_themes
+
+
+def validate_and_enrich_trends(self, identified_trends: Dict) -> Dict:
+    """Validate trends by finding corroborating evidence across sources"""
+    
+    enriched_trends = {}
+    
+    for trend_name, trend_data in identified_trends.items():
+        # Count how many different sources report on this trend
+        sources = {}
+        for item in trend_data["related_items"]:
+            source = item.get("source", "")
+            sources[source] = sources.get(source, 0) + 1
+        
+        # Calculate trend strength based on:
+        # 1. Number of different sources
+        # 2. Authority of sources
+        # 3. Recency of reports
+        trend_strength = len(sources)
+        if any(auth in sources for auth in ["openai", "google", "microsoft", "anthropic"]):
+            trend_strength += 2
+        
+        enriched_trends[trend_name] = {
+            **trend_data,
+            "source_diversity": len(sources),
+            "trend_strength": trend_strength,
+            "corroborating_sources": list(sources.keys())[:5]
+        }
+    
+    return enriched_trends
+
+
+def analyze_trends_with_developer_impact(self, state: AgentState) -> AgentState:
+    """Analyze trends and assess developer impact"""
+    
+    # First identify trend patterns
+    trend_patterns = self.identify_trend_patterns(state["search_results"])
+    
+    prompt = f"""
+    Analyze these AI developments to identify MAJOR TRENDS and their impact on developers.
+    
+    Search Results: {json.dumps(state["search_results"][:30], indent=2)}
+    Identified Patterns: {json.dumps(trend_patterns, indent=2)}
+    
+    For each major trend you identify:
+    
+    1. TREND NARRATIVE:
+       - What's the overarching story? (e.g., "The Rise of Autonomous AI Agents")
+       - How do multiple developments connect to form this trend?
+       - What's driving this trend forward?
+    
+    2. TECHNICAL DETAILS:
+       - Specific technologies, APIs, frameworks involved
+       - Technical capabilities being introduced
+       - Implementation requirements and considerations
+    
+    3. DEVELOPER IMPACT:
+       - How does this change developer workflows?
+       - What new skills are needed?
+       - What opportunities does this create?
+       - What challenges must be addressed?
+    
+    4. KEY DEVELOPMENTS:
+       - List 3-5 specific announcements that exemplify this trend
+       - Include company, product name, and key features
+       - Prioritize developments with immediate availability
+    
+    5. ACTIONABLE INSIGHTS:
+       - What should developers do TODAY?
+       - What should they learn or experiment with?
+       - What tools should they evaluate?
+    
+    Structure your analysis as:
+    {{
+        "major_trends": [
+            {{
+                "trend_title": "The Rise of AI Agents",
+                "narrative": "We're witnessing...",
+                "technical_details": "...",
+                "developer_impact": "...",
+                "key_developments": [...],
+                "action_items": [...],
+                "supporting_evidence": [...]
+            }}
+        ],
+        "cross_cutting_themes": [...],
+        "emerging_concerns": [...]
+    }}
+    """
+
+
+def generate_developer_trend_report(self, state: AgentState) -> AgentState:
+    """Generate trend-focused report with developer insights"""
+    
+    trend_analysis = state["trend_analysis"]
+    date_range = state["report_date_range"]
+    
+    prompt = f"""
+    Create a compelling AI trends report for developers using this analysis:
+    
+    Trend Analysis: {json.dumps(trend_analysis, indent=2)}
+    Date Range: {date_range}
+    
+    CRITICAL: Write in the style of the provided example - narrative-driven, insightful, and developer-focused.
+    
+    Structure:
+    
+    # AI Trends Weekly: {date_range}
+    
+    [For each major trend, create a section like:]
+    
+    ## Trend 1: [Compelling Title like "Agents are Taking the Scene, Changing Your Job"]
+    
+    [Opening paragraph: Set the scene with a compelling narrative about what's happening]
+    
+    [2-3 paragraphs diving deep into specific developments, connecting them to show the bigger picture]
+    
+    [Technical implications paragraph - what this means for architecture, infrastructure, skills]
+    
+    [Balanced perspective - include both opportunities and challenges]
+    
+    ### Key Takeaways for AI Engineers
+    [3 bullet points with specific, actionable insights]
+    
+    ### Action Items:
+    [2-3 specific things developers should do this week]
+    
+    Writing Guidelines:
+    - Use vivid, engaging language ("witnessing the emergence", "fundamental shift")
+    - Connect multiple developments to show patterns
+    - Explain WHY things matter, not just WHAT happened
+    - Include specific product names, features, and capabilities
+    - Provide technical depth while remaining accessible
+    - Balance enthusiasm with pragmatism
+    - Use metaphors and analogies to explain complex concepts
+    - Embed source links naturally in the text
+    
+    Tone:
+    - Authoritative but approachable
+    - Technically informed but not jargon-heavy
+    - Forward-looking but grounded in current reality
+    - Excited about possibilities but aware of challenges
+    
+    Remember: This is for developers who need to understand not just what's new, 
+    but how it changes their work and what they should do about it.
+    """

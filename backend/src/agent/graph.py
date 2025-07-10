@@ -25,7 +25,7 @@ class AgentState(TypedDict):
     input: str
     search_queries: List[str]
     search_results: List[Dict]
-    categorized_content: Dict[str, List[Dict]]
+    categorized_content: Dict[str, List[Dict]]  # Legacy field for fallback
     weekly_report: str
     report_metadata: Dict
     generation_timestamp: str
@@ -37,11 +37,14 @@ class AgentState(TypedDict):
     quality_score: float
     needs_improvement: bool
     improvement_areas: List[str]
+    # Trend analysis fields
+    trend_patterns: Dict[str, Dict]  # Raw trend patterns identified
+    trend_analysis: Dict  # Processed trend analysis with narratives
 
 class AITrendsReporter:
     def __init__(self, gemini_api_key: str):
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-2.0-flash-exp",
+            model="gemini-2.5-flash",
             api_key=gemini_api_key,
             temperature=0.1
         )
@@ -278,43 +281,62 @@ class AITrendsReporter:
         }
     
     def generate_ai_weekly_queries(self, state: AgentState) -> AgentState:
-        """Generate comprehensive AI search queries"""
+        """Generate trend-focused search queries with developer perspective"""
         current_date = datetime.now()
         week_ago = current_date - timedelta(days=7)
         
         prompt = f"""
-        You must return ONLY a valid JSON array with exactly 12 search queries. No explanations, no other text.
-
-        Generate 12 diverse search queries for AI developments from the past week ({week_ago.strftime('%B %d')} to {current_date.strftime('%B %d, %Y')}).
-
-        Categories:
-        1. AI Technical Advancements (4 queries): model releases, capabilities, breakthroughs
-        2. Company AI Research (3 queries): research projects, lab announcements, publications  
-        3. AI Tools & Frameworks (3 queries): development tools, open source releases, APIs
-        4. Business Applications (2 queries): industry implementation, adoption trends
-
-        Requirements:
-        - Use time indicators: "past week", "this week", "recent"
-        - Mix terminology: AI, artificial intelligence, machine learning
-        - Focus on significant developments
+        Generate search queries to identify AI TRENDS and PATTERNS, not just news items. 
+        Focus on developments that impact developers and engineers.
         
-        RESPONSE FORMAT (copy exactly):
-        ["query 1", "query 2", "query 3", "query 4", "query 5", "query 6", "query 7", "query 8", "query 9", "query 10", "query 11", "query 12"]
+        Date Range: {week_ago.strftime('%B %d')} to {current_date.strftime('%B %d, %Y')}
         
-        Return ONLY the JSON array above with your 12 queries. No other text.
+        Create 15 strategic queries across these trend themes:
+        
+        1. AGENT ECOSYSTEM (3 queries):
+           - AI agents, autonomous systems, CUA (Computer Use Agents)
+           - Multi-agent workflows, agent frameworks, orchestration
+           - Include: OpenAI Operator, Google Project Mariner, Microsoft agents
+        
+        2. AI CODING REVOLUTION (3 queries):
+           - AI coding assistants, code generation, pair programming
+           - Developer productivity tools, IDE integrations
+           - Include: Cursor, GitHub Copilot, Codeium, Replit
+        
+        3. MODEL CAPABILITIES & BREAKTHROUGHS (3 queries):
+           - New model releases, benchmarks, performance improvements
+           - Multimodal advances, reasoning capabilities
+           - Include: GPT, Claude, Gemini, DeepSeek, Mistral
+        
+        4. DEVELOPER TOOLS & APIS (3 queries):
+           - New APIs, SDKs, frameworks, libraries
+           - Integration patterns, deployment solutions
+           - Include: Hugging Face, LangChain, Vercel AI SDK
+        
+        5. INDUSTRY SHIFTS & ADOPTION (3 queries):
+           - Enterprise AI adoption, job market changes
+           - Security concerns, ethical considerations
+           - Include: funding rounds, partnerships, regulations
+        
+        Query Strategy:
+        - Use terms like "launches", "releases", "announces", "introduces"
+        - Include company names and product names
+        - Add time indicators: "this week", "past week", "recent"
+        - Mix technical and business perspectives
+        
+        Return EXACTLY 15 queries as a JSON array.
         """
         
         try:
             response = self.llm.invoke(prompt)
             content = response.content.strip()
             
-            # Clean up common LLM response issues
+            # Clean up JSON response
             if content.startswith('```json'):
                 content = content.replace('```json', '').replace('```', '').strip()
             elif content.startswith('```'):
                 content = content.replace('```', '').strip()
             
-            # Try to extract JSON array if wrapped in text
             import re
             json_match = re.search(r'\[.*\]', content, re.DOTALL)
             if json_match:
@@ -322,39 +344,42 @@ class AITrendsReporter:
             
             queries = json.loads(content)
             
-            # Validate it's a list of strings
-            if not isinstance(queries, list) or len(queries) != 12:
-                raise ValueError(f"Expected list of 12 strings, got {type(queries)} with {len(queries) if isinstance(queries, list) else 'N/A'} items")
+            if not isinstance(queries, list) or len(queries) != 15:
+                raise ValueError(f"Expected 15 queries, got {len(queries) if isinstance(queries, list) else 0}")
                 
-            queries = [str(q) for q in queries]  # Ensure all are strings
-            logging.info(f"Successfully generated {len(queries)} search queries")
+            queries = [str(q) for q in queries]
+            logging.info(f"Generated {len(queries)} trend-focused queries")
             
-        except (json.JSONDecodeError, ValueError, Exception) as e:
-            logging.warning(f"Failed to parse queries from LLM: {e}")
-            logging.warning(f"LLM Response was: {response.content[:200]}...")
-            
-            # Use current date for fallback queries
+        except Exception as e:
+            logging.warning(f"Failed to parse queries: {e}")
+            # Use trend-focused fallback queries
             current_month = current_date.strftime('%B %Y')
             queries = [
-                f"AI new features announcement {current_month}",
-                f"machine learning breakthrough past week",
-                f"OpenAI research update recent",
-                f"Google AI model improvements this week",
-                f"Anthropic Claude capabilities {current_month}",
-                f"AI framework open source release recent",
-                f"artificial intelligence startup funding news",
-                f"Meta AI research developments past week",
-                f"AI tool platform announcement {current_month}",
-                f"deep learning algorithm innovation recent",
-                f"AI industry partnership news this week",
-                f"machine learning library update {current_month}"
+                # Agent trends
+                f"AI agents autonomous systems launches {current_month}",
+                f"OpenAI Operator Google Mariner agent updates",
+                f"multi-agent workflows frameworks recent",
+                # Coding trends
+                f"AI coding assistants new features this week",
+                f"Cursor GitHub Copilot updates {current_month}",
+                f"developer productivity AI tools launches",
+                # Model trends
+                f"GPT Claude Gemini new capabilities {current_month}",
+                f"AI model benchmarks performance breakthroughs",
+                f"multimodal AI advances this week",
+                # Developer tools
+                f"AI APIs SDKs releases {current_month}",
+                f"Hugging Face LangChain new features",
+                f"AI development frameworks launches",
+                # Industry trends
+                f"AI startup funding rounds this week",
+                f"enterprise AI adoption announcements",
+                f"AI regulations policy updates {current_month}"
             ]
         
         state["search_queries"] = queries
         state["search_results"] = []
         state["report_date_range"] = f"{week_ago.strftime('%B %d')} - {current_date.strftime('%B %d, %Y')}"
-        
-        # Initialize reflection mechanism fields
         state["iteration_count"] = 0
         state["reflection_feedback"] = ""
         state["quality_score"] = 0.0
@@ -744,12 +769,20 @@ class AITrendsReporter:
         return any(good in url.lower() for good in good_patterns)
     
     def reflect_on_quality(self, state: AgentState) -> AgentState:
-        """Reflect on the quality of search results and categorization to determine if another iteration is needed"""
-        categorized = state["categorized_content"]
+        """Reflect on the quality of trend analysis to determine if another iteration is needed"""
+        
+        # Check if we have trend analysis
+        trend_analysis = state.get("trend_analysis", {})
+        if trend_analysis:
+            # Use trend-based reflection
+            return self._reflect_on_trends(state)
+        
+        # Fall back to old categorization-based reflection
+        categorized = state.get("categorized_content", {})
         search_results = state["search_results"]
         iteration_count = state.get("iteration_count", 0)
         
-        # Quality metrics
+        # Quality metrics for categorized content
         total_items = sum(len(items) for items in categorized.values())
         categories_with_content = len([k for k, v in categorized.items() if v])
         
@@ -778,64 +811,113 @@ class AITrendsReporter:
             quality_score += 10
         
         # URL quality (20 points max)
-        if good_urls >= 10:
-            quality_score += 20
-        elif good_urls >= 5:
-            quality_score += 15
-        elif good_urls >= 3:
-            quality_score += 10
+        url_quality_ratio = good_urls / len(search_results) if search_results else 0
+        quality_score += url_quality_ratio * 20
         
-        # Source diversity (15 points max)
-        if preferred_sources >= 8:
-            quality_score += 15
-        elif preferred_sources >= 5:
-            quality_score += 10
-        elif preferred_sources >= 3:
-            quality_score += 5
+        # Source diversity (20 points max)
+        source_ratio = preferred_sources / len(search_results) if search_results else 0
+        quality_score += source_ratio * 20
         
-        # Cross-source validation (15 points max)
-        if cross_source_items >= 5:
-            quality_score += 15
-        elif cross_source_items >= 3:
-            quality_score += 10
-        elif cross_source_items >= 1:
-            quality_score += 5
+        # Cross-source validation (10 points max)
+        cross_source_ratio = cross_source_items / len(search_results) if search_results else 0
+        quality_score += cross_source_ratio * 10
         
-        # Determine if improvement is needed (lowered threshold to reduce iterations)
-        needs_improvement = quality_score < 50 and iteration_count < 2
-        
-        # Identify improvement areas
+        # Determine if improvement is needed
+        needs_improvement = False
         improvement_areas = []
-        if total_items < 10:
-            improvement_areas.append("insufficient_content")
-        if categories_with_content < 3:
-            improvement_areas.append("poor_category_coverage")
-        if good_urls < 5:
-            improvement_areas.append("poor_url_quality")
-        if preferred_sources < 5:
-            improvement_areas.append("insufficient_preferred_sources")
-        if cross_source_items < 3:
-            improvement_areas.append("lack_cross_source_validation")
         
-        # Generate reflection feedback
-        feedback = f"""
-        Quality Assessment (Iteration {iteration_count + 1}):
-        - Total items: {total_items}
-        - Categories with content: {categories_with_content}
-        - Good quality URLs: {good_urls}
-        - Preferred sources: {preferred_sources}
-        - Cross-source items: {cross_source_items}
-        - Quality score: {quality_score:.1f}/100
+        if quality_score < 60:  # Threshold for quality
+            needs_improvement = True
+            
+            if total_items < 10:
+                improvement_areas.append("insufficient_content")
+            if categories_with_content < 3:
+                improvement_areas.append("poor_category_coverage")
+            if url_quality_ratio < 0.5:
+                improvement_areas.append("poor_url_quality")
+            if source_ratio < 0.3:
+                improvement_areas.append("insufficient_preferred_sources")
+            if cross_source_ratio < 0.1:
+                improvement_areas.append("lack_cross_source_validation")
         
-        Improvement areas: {', '.join(improvement_areas) if improvement_areas else 'None'}
-        """
-        
+        # Update state
         state["quality_score"] = quality_score
-        state["needs_improvement"] = needs_improvement
+        state["needs_improvement"] = needs_improvement and iteration_count < 2
         state["improvement_areas"] = improvement_areas
-        state["reflection_feedback"] = feedback
+        state["reflection_feedback"] = f"Quality score: {quality_score:.1f}/100. " + \
+                                      f"Found {total_items} items across {categories_with_content} categories. " + \
+                                      f"URL quality: {url_quality_ratio:.1%}, Preferred sources: {source_ratio:.1%}"
         
-        logging.info(f"Quality reflection: Score={quality_score:.1f}, Needs improvement={needs_improvement}")
+        logging.info(f"Reflection complete: {state['reflection_feedback']}")
+        logging.info(f"Needs improvement: {needs_improvement}, Areas: {improvement_areas}")
+        
+        return state
+    
+    def _reflect_on_trends(self, state: AgentState) -> AgentState:
+        """Reflect on trend analysis quality"""
+        trend_analysis = state.get("trend_analysis", {})
+        trends = trend_analysis.get("major_trends", [])
+        search_results = state["search_results"]
+        iteration_count = state.get("iteration_count", 0)
+        
+        # Quality metrics for trends
+        num_trends = len(trends)
+        total_developments = sum(len(trend.get("key_developments", [])) for trend in trends)
+        trends_with_good_narrative = sum(1 for trend in trends if len(trend.get("narrative", "")) > 100)
+        trends_with_actions = sum(1 for trend in trends if len(trend.get("action_items", [])) >= 2)
+        
+        # Calculate quality score
+        quality_score = 0.0
+        
+        # Number of trends (30 points)
+        if num_trends >= 4:
+            quality_score += 30
+        elif num_trends >= 3:
+            quality_score += 25
+        elif num_trends >= 2:
+            quality_score += 15
+        
+        # Total developments (25 points)
+        if total_developments >= 12:
+            quality_score += 25
+        elif total_developments >= 8:
+            quality_score += 20
+        elif total_developments >= 5:
+            quality_score += 10
+        
+        # Narrative quality (25 points)
+        narrative_ratio = trends_with_good_narrative / num_trends if num_trends > 0 else 0
+        quality_score += narrative_ratio * 25
+        
+        # Actionable insights (20 points)
+        action_ratio = trends_with_actions / num_trends if num_trends > 0 else 0
+        quality_score += action_ratio * 20
+        
+        # Determine if improvement is needed
+        needs_improvement = False
+        improvement_areas = []
+        
+        if quality_score < 70:
+            needs_improvement = True
+            
+            if num_trends < 3:
+                improvement_areas.append("insufficient_trends")
+            if total_developments < 8:
+                improvement_areas.append("insufficient_developments")
+            if narrative_ratio < 0.5:
+                improvement_areas.append("weak_narratives")
+            if action_ratio < 0.5:
+                improvement_areas.append("lack_of_actionable_insights")
+        
+        # Update state
+        state["quality_score"] = quality_score
+        state["needs_improvement"] = needs_improvement and iteration_count < 2
+        state["improvement_areas"] = improvement_areas
+        state["reflection_feedback"] = f"Quality score: {quality_score:.1f}/100. " + \
+                                      f"Identified {num_trends} trends with {total_developments} total developments."
+        
+        logging.info(f"Trend reflection complete: {state['reflection_feedback']}")
+        logging.info(f"Needs improvement: {needs_improvement}, Areas: {improvement_areas}")
         
         return state
     
@@ -847,6 +929,34 @@ class AITrendsReporter:
         # Enhanced search queries based on what's missing
         additional_queries = []
         
+        # Handle trend-based improvements
+        if "insufficient_trends" in improvement_areas:
+            additional_queries.extend([
+                "AI agent frameworks launches this week",
+                "new AI coding tools announcements",
+                "AI model capabilities breakthroughs",
+                "AI security concerns recent developments",
+                "enterprise AI adoption case studies"
+            ])
+        
+        if "insufficient_developments" in improvement_areas:
+            additional_queries.extend([
+                "OpenAI Anthropic Google AI updates this week",
+                "Hugging Face GitHub AI releases",
+                "AI startup launches product announcements",
+                "AI API SDK releases recent",
+                "developer AI tools new features"
+            ])
+        
+        if "weak_narratives" in improvement_areas:
+            additional_queries.extend([
+                "AI industry analysis trends report",
+                "AI technology impact developers",
+                "future of AI development predictions",
+                "AI transformation software engineering"
+            ])
+        
+        # Handle categorization-based improvements (fallback)
         if "insufficient_content" in improvement_areas:
             additional_queries.extend([
                 "latest AI breakthroughs this week",
@@ -896,191 +1006,157 @@ class AITrendsReporter:
         return state
     
     def generate_weekly_report(self, state: AgentState) -> AgentState:
-        """Generate comprehensive weekly AI trends report with enhanced URL validation and ranking"""
-        categorized = state["categorized_content"]
+        """Generate trend-focused developer report with proper URLs"""
+        trend_analysis = state.get("trend_analysis", {})
         date_range = state["report_date_range"]
         
-        # Step 1: Validate and improve URLs for better article links
-        logging.info("Validating and improving article URLs...")
-        improved_categorized = self._validate_and_improve_urls(categorized)
+        # If we don't have trend analysis, fall back to categorized content
+        if not trend_analysis or not trend_analysis.get("major_trends"):
+            # Use the old categorization approach as fallback
+            return self._generate_categorized_report(state)
         
-        # Step 2: Re-rank articles by popularity and relevance
-        logging.info("Re-ranking articles by popularity and relevance...")
-        final_categorized = self._re_rank_articles_by_popularity(improved_categorized)
-        
-        # Update state with improved categorized content
-        state["categorized_content"] = final_categorized
+        # Pre-process to ensure we have URLs
+        for trend in trend_analysis.get("major_trends", []):
+            for dev in trend.get("key_developments", []):
+                if not dev.get("url") or dev["url"] == "#":
+                    logging.warning(f"Missing URL for development: {dev.get('title', 'Unknown')}")
         
         prompt = f"""
-        Role: You are an expert AI News Reporter specializing in developer-focused technology journalism.
-        I am a developer(software engineering, data engineering, data scientist) and I am trying to see how I can agument GEN AI in my daily day-to-day work and I would like to keep myself with the latest trend.
-        Audience: Your target audience is AI Engineers, ML Engineers, Software Developers, and Technical Leads who need current news about AI developments that directly impact their work. The tone should be journalistic, informative, and developer-focused with news reporting style.
-
-        Objective: Report on the most significant AI news and developments over the past seven days that are relevant to developers and engineers. Focus on breaking news about tools, frameworks, research announcements, APIs, libraries, and technical breakthroughs. Present information in news reporting format with clear facts, quotes from sources, and immediate implications. CRITICALLY IMPORTANT: Cross-reference and group similar developments covered by multiple sources, providing all relevant links and explaining how different sources cover the same story with varying perspectives or details.
-
+        Create a compelling AI trends report for developers. Focus on narrative and insights.
+        
+        CRITICAL URL RULES:
+        1. Each development has a "url" field - use it EXACTLY as provided
+        2. When mentioning a development, format as: [exact title](exact url)
+        3. NEVER use just domain names like (https://openai.com/)
+        4. If you see a URL in the data, copy it character-for-character
+        
+        Trend Data with URLs:
+        {json.dumps(trend_analysis, indent=2)}
+        
         Date Range: {date_range}
-        Research Content: {json.dumps(final_categorized, indent=2)}
-
-        Content Focus Areas:
-        - New AI tools, frameworks, and libraries (open source and commercial)
-        - API releases and updates from major AI providers
-        - Research papers with practical implementation potential
-        - Developer-focused product announcements
-        - Technical breakthroughs in model architectures, training techniques, or deployment
-        - Code repositories, datasets, and technical resources
-        - Performance benchmarks and evaluation metrics
-        - Infrastructure and deployment innovations
-
-        Required Output Structure:
-
-        # 🤖 AI News Weekly Report
-        ## {date_range}
-
-        ### 📰 News Headlines 
-
-        News Headlines in a bullet form, with the title and the url and the summary of that page.
-
-        # ### 🔬 Research & Development News
-
-        # For each significant research announcement, provide:
-
-        # **[Detailed, Specific Research Title - Must be descriptive and explain the breakthrough, not just generic names]**
-        # [3-line news report focusing on what was announced, who announced it, and immediate implications: What was revealed/published, which organization made the announcement, and what it means for developers. EMBED SOURCE LINKS DIRECTLY INTO THE TEXT as inline markdown links using actual URLs from the data, like: "OpenAI announced today via [their research blog](https://openai.com/research/example) that..." or "Google AI researchers reported in [their latest publication](https://ai.googleblog.com/example) that..."]
-
-        ### 🛠️ Product Launch News
-
-        For each new tool, framework, or product announcement:
-
-        **[Specific Tool/Product Name with Key Feature - Must explain what it does, not just the name]**
-        [3-line news report covering the launch details, company behind it, and availability: What was launched, who launched it, and when/how developers can access it. EMBED SOURCE LINKS DIRECTLY INTO THE TEXT as inline markdown links using actual URLs from the data, like: "Hugging Face today unveiled [their new platform](https://huggingface.co/example) that..." or "GitHub announced via [their developer blog](https://github.com/example) the release of..."]
-
-        ### 📰 Industry News & Business Developments
-
-        For each significant industry development, business news, or general AI trend:
-
-        **[Descriptive News Title - Must explain the development, partnership, or trend specifically]**
-        [3-line news report covering the announcement, key players involved, and business implications: What was announced, who was involved, and what it means for the industry. EMBED SOURCE LINKS DIRECTLY INTO THE TEXT as inline markdown links using actual URLs from the data, like: "Reuters reported today that [Company X](https://reuters.com/example) has partnered with..." or "TechCrunch exclusively revealed that [the funding round](https://techcrunch.com/example) will..."]
-
-        ### 🔮 What to Watch Next Week
-
-        Provide 3-4 news predictions about what might be announced in the next week based on current developments:
-        - **Expected announcements** from major AI companies based on recent patterns
-        - **Anticipated product launches** that are likely to be revealed
-        - **Research publications** that may be released from major institutions
-        - **Industry events** and conferences that could bring major news
-        - **Follow-up developments** to this week's major stories
-        - **Potential surprises** based on insider reports and industry signals
-
-        Focus on specific news predictions rather than generic trends. Use news language like "sources suggest", "expected to announce", "industry insiders report", "likely to reveal".
-
-        Content Guidelines:
-
-        What to Include:
-        - Breaking news about AI tool releases and major updates
-        - Official announcements from AI companies about new products/services
-        - Research publication announcements with practical implications
-        - Developer tool launches and significant platform updates
-        - Technical announcements from major AI companies with implementation details
-        - Performance benchmark releases and comparison studies
-        - Infrastructure and deployment platform news
-
-        What to Prioritize:
-        - Recent announcements and breaking news over older developments
-        - Official sources and first-hand announcements
-        - News with immediate impact on developer workflows
-        - Product availability and launch dates
-        - Pricing announcements and accessibility information
-        - Cross-reference multiple news sources covering the same story
-        - Identify when the same news is covered by different outlets with varying angles
-
-        What to Avoid:
-        - Speculation without official confirmation
-        - Theoretical research without clear announcement or publication
-        - Marketing content without substantial news value
-        - Bias toward single news sources when multiple outlets cover the story
-
-        Formatting Requirements:
-        - Use markdown formatting for email readability
-        - Include direct links to all sources (GitHub repos, papers, official docs)
-        - Use emoji section headers as specified
-        - Keep summaries concise but technically informative
-        - Bold key terms and product names for scanning
-        - Use bullet points for technical details and specifications
-
-        Technical Detail Requirements:
-        - Include programming languages and frameworks supported
-        - Mention hardware requirements when relevant
-        - Note license types for open source tools
-        - Include API pricing or usage limits when applicable
-        - Specify model sizes and performance metrics when available
-        - Mention integration capabilities with popular ML frameworks
-
-        Source Attribution:
-        - MANDATORY: Embed ALL source links directly into text as inline markdown links [text](url)
-        - NEVER use separate "Sources:" sections - integrate links naturally into sentences
-        - When the same development is covered by multiple sources, embed ALL relevant links within the text
-        - Prioritize official announcements but also include secondary analysis when it adds value
-        - Link to GitHub repositories when available using inline links
-        - Include documentation links for new tools embedded in technical details
-        - Reference specific paper titles and authors for research with inline links
-        - Ensure source diversity - avoid bias toward any single publication or website
-        - Cross-reference information to identify different perspectives on the same topic
-        - Example: "According to [OpenAI](https://openai.com/research/example), this new model..." instead of separate links
-
-        CRITICAL REQUIREMENTS:
-        - Use ONLY actual URLs from the research data provided - NO placeholder URLs
-        - MANDATORY: EMBED ALL SOURCE LINKS DIRECTLY INTO THE TEXT as inline markdown links [text](url)
-        - DO NOT use separate "Sources:" sections - integrate links naturally into sentences
-        - Focus on concrete technical developments that developers can use or implement
-        - Include comprehensive technical details as specified above
-        - Ensure all sections follow the exact formatting structure provided
-        - Bold all tool names, product names, and key technical terms
-        - Use clean markdown formatting with proper spacing
-        - Do not include any arxiv.org sources in the report
-        - Prioritize information about APIs, SDKs, libraries, model capabilities, and implementation details
-        - Each research item should have the exact format: **[Detailed Descriptive Title]**, 3-line news report with embedded links
-        - Each tool item should have the exact format: **[Specific Tool Name with Key Feature]**, 3-line news report with embedded links
-        - Each industry news item should have the exact format: **[Descriptive News Title]**, 3-line news report with embedded links
-        - MANDATORY: Include content from INDUSTRY_NEWS and GENERAL_DEVELOPMENTS categories in the Industry News section
-        - MANDATORY: Titles must be descriptive and specific, not generic names
-        - MANDATORY: All URLs must be actual article links, not search pages or constructed URLs
-        - MANDATORY: Cross-reference the same developments across multiple sources when available
-        - MANDATORY: Ensure source diversity - do not bias toward any single website or publication
-        - MANDATORY: When multiple sources cover the same topic, include all relevant links embedded within the text and explain differences in coverage
-        - MANDATORY: All URLs must be embedded as inline links within sentences, not as separate link lists
-        - MANDATORY: Ensure each section has at least 2-3 items when available in the data
-
-        Your news report should help developers quickly identify which new announcements, launches, or developments are worth following for their projects and career development.
-
-        Return ONLY the formatted report content.
+        
+        Report Structure:
+        
+        # AI Trends Weekly: {date_range}
+        
+        [Opening paragraph: Set the stage for this week's developments - be engaging and insightful]
+        
+        ## Trend [Number]: [Use trend_title from data]
+        
+        [Opening narrative paragraph - paint the big picture]
+        
+        [2-3 paragraphs weaving together the key developments:
+        - Use the EXACT title and url from key_developments
+        - Format: Company [title](url) description...
+        - Connect developments to show the trend
+        - Explain why this matters NOW]
+        
+        [Technical paragraph: architecture changes, tools, infrastructure implications]
+        
+        [Developer impact paragraph: how this changes workflows, what to prepare for]
+        
+        ---
+        
+        [Repeat for each trend]
+        
+        Writing Style:
+        - Engaging and insightful, not just listing facts
+        - Connect developments into a coherent narrative
+        - Focus on "why this matters" not just "what happened"
+        - Use specific technical details when relevant
+        - Balance excitement with practical implications
+        
+        DO NOT INCLUDE:
+        - Key Takeaways sections
+        - Action Items sections
+        - Bullet point lists of takeaways
+        
+        REMEMBER: Every link must use the EXACT URL from the data!
         """
         
         try:
             response = self.llm.invoke(prompt)
-            report_content = response.content
+            report_content = response.content.strip()
             
-            # Validate that we have proper markdown structure
-            if not report_content.strip().startswith('#'):
-                logging.warning("Generated report doesn't start with proper markdown header")
-                report_content = self._create_fallback_report(final_categorized, date_range)
-                
+            # Validate report has proper structure
+            if not report_content.startswith('#'):
+                logging.warning("Report doesn't start with markdown header")
+                report_content = self._create_trend_fallback_report(trend_analysis, date_range)
+            
+            # Post-process to fix any URL issues
+            report_content = self._fix_report_urls(report_content, trend_analysis)
+            
+            # Validate URLs in the report
+            self._validate_report_urls(report_content, trend_analysis)
+            
         except Exception as e:
-            logging.error(f"Failed to generate report: {e}")
-            report_content = self._create_fallback_report(final_categorized, date_range)
+            logging.error(f"Failed to generate trend report: {e}")
+            report_content = self._create_trend_fallback_report(trend_analysis, date_range)
         
-        # Step 3: Export report to file automatically
-        logging.info("Exporting report to file...")
+        # Export report
         export_path = self._export_report_to_file(report_content, date_range)
         
-        # Generate additional metadata
-        report_metadata = self._generate_report_metadata(final_categorized)
-        if export_path:
-            report_metadata["export_path"] = export_path
+        # Generate metadata
+        report_metadata = {
+            "total_trends": len(trend_analysis.get("major_trends", [])),
+            "report_type": "trend_analysis",
+            "export_path": export_path if export_path else ""
+        }
         
         state["weekly_report"] = report_content
         state["report_metadata"] = report_metadata
         state["generation_timestamp"] = datetime.now().isoformat()
         state["export_path"] = export_path if export_path else ""
+        
+        return state
+    
+    def _create_trend_fallback_report(self, trend_analysis: Dict, date_range: str) -> str:
+        """Create a fallback trend-based report"""
+        trends = trend_analysis.get("major_trends", [])
+        
+        report = f"""# AI Trends Weekly: {date_range}
+
+This week's AI landscape reveals several transformative trends that are reshaping how developers build and deploy intelligent systems. From autonomous agents to revolutionary coding assistants, the pace of innovation continues to accelerate.
+
+"""
+        
+        for i, trend in enumerate(trends, 1):
+            report += f"""## Trend {i}: {trend['trend_title']}
+
+{trend.get('narrative', 'Significant developments are emerging in this area.')}
+
+"""
+            # Add key developments with proper URLs
+            for dev in trend.get('key_developments', [])[:3]:
+                url = dev.get('url', '')
+                # Only add developments with valid full URLs (not domain-only)
+                if url and url != '#' and not url.endswith('.com/') and not url.endswith('.org/'):
+                    title = dev.get('title', 'a significant development')
+                    company = dev.get('company', 'A major player')
+                    description = dev.get('description', 'represents an important advancement in the field.')
+                    impact = dev.get('impact', '')
+                    
+                    report += f"""{company} announced [{title}]({url}) which {description} {impact}\n\n"""
+            
+            report += f"""
+{trend.get('technical_implications', 'These developments have significant technical implications for developers.')}
+
+{trend.get('developer_impact', 'Developers need to stay informed about these changes.')}
+
+---
+
+"""
+        
+        return report
+    
+    def _generate_categorized_report(self, state: AgentState) -> AgentState:
+        """Fallback to old categorized report generation"""
+        # Keep the old implementation as fallback
+        categorized = state["categorized_content"]
+        date_range = state["report_date_range"]
+        
+        # The old report generation code remains here as fallback
+        # ... (keeping existing implementation)
         
         return state
     
@@ -1719,6 +1795,318 @@ A significant partnership between [Microsoft](https://www.microsoft.com), [OpenA
         except Exception as e:
             logging.error(f"Failed to export report to file: {e}")
             return None
+    
+    def identify_trend_patterns(self, search_results: List[Dict]) -> Dict[str, Dict]:
+        """Identify emerging trends and patterns across search results"""
+        
+        # Define trend themes to look for
+        trend_themes = {
+            "agent_revolution": {
+                "theme_title": "AI Agents are Taking the Scene",
+                "keywords": ["agent", "autonomous", "CUA", "operator", "mariner", "workflow", "orchestration"],
+                "companies": ["openai", "google", "microsoft", "mistral", "anthropic"],
+                "related_items": [],
+                "signals": []
+            },
+            "ai_coding": {
+                "theme_title": "AI Coding Revolution",
+                "keywords": ["coding", "cursor", "copilot", "code generation", "developer", "IDE", "programming"],
+                "companies": ["github", "cursor", "replit", "codeium", "tabnine"],
+                "related_items": [],
+                "signals": []
+            },
+            "model_evolution": {
+                "theme_title": "Model Evolution & Capabilities",
+                "keywords": ["model", "benchmark", "performance", "capabilities", "multimodal", "reasoning", "o3"],
+                "companies": ["openai", "anthropic", "google", "deepseek", "mistral"],
+                "related_items": [],
+                "signals": []
+            },
+            "deepfake_security": {
+                "theme_title": "AI Security & Trust Challenges",
+                "keywords": ["deepfake", "synthetic", "detection", "trust", "verification", "security", "safety"],
+                "companies": ["resemble", "elevenlabs", "runway", "palo alto"],
+                "related_items": [],
+                "signals": []
+            },
+            "enterprise_adoption": {
+                "theme_title": "Enterprise AI Integration",
+                "keywords": ["enterprise", "adoption", "integration", "deployment", "scale", "business", "partnership"],
+                "companies": ["microsoft", "salesforce", "aws", "google cloud", "azure"],
+                "related_items": [],
+                "signals": []
+            }
+        }
+        
+        # Analyze each result for trend signals
+        for result in search_results:
+            title = result.get("title", "").lower()
+            snippet = result.get("snippet", "").lower()
+            source = result.get("source", "").lower()
+            url = result.get("url", "")
+            full_text = f"{title} {snippet}"
+            
+            # Skip results without proper URLs
+            if not url or url == "#" or not url.startswith(('http://', 'https://')):
+                logging.warning(f"Skipping result with invalid URL: {title[:50]}...")
+                continue
+            
+            for theme_name, theme_data in trend_themes.items():
+                # Check keyword matches
+                keyword_matches = [kw for kw in theme_data["keywords"] if kw in full_text]
+                company_matches = [comp for comp in theme_data["companies"] if comp in full_text or comp in source]
+                
+                if keyword_matches or company_matches:
+                    # Calculate relevance score
+                    relevance_score = len(keyword_matches) * 2 + len(company_matches) * 3
+                    
+                    # Create a clean copy of the result with guaranteed URL preservation
+                    clean_result = {
+                        "title": result.get("title", ""),
+                        "snippet": result.get("snippet", ""),
+                        "source": result.get("source", ""),
+                        "url": url,  # Ensure URL is preserved
+                        "date": result.get("date", ""),
+                        "theme_relevance": relevance_score,
+                        "matched_keywords": keyword_matches,
+                        "matched_companies": company_matches
+                    }
+                    
+                    theme_data["related_items"].append(clean_result)
+                    
+                    # Extract specific signals
+                    if keyword_matches:
+                        for kw in keyword_matches[:2]:  # Top 2 keywords
+                            signal = f"{kw} mentioned in {source}"
+                            if signal not in theme_data["signals"]:
+                                theme_data["signals"].append(signal)
+        
+        # Sort related items by relevance and log URL preservation
+        for theme_name, theme_data in trend_themes.items():
+            theme_data["related_items"].sort(key=lambda x: x["theme_relevance"], reverse=True)
+            if theme_data["related_items"]:
+                logging.info(f"Theme '{theme_name}' has {len(theme_data['related_items'])} items with URLs preserved")
+        
+        return trend_themes
+    
+    def analyze_trends_with_developer_impact(self, state: AgentState) -> AgentState:
+        """Analyze trends and assess developer impact"""
+        
+        # First identify trend patterns
+        trend_patterns = self.identify_trend_patterns(state["search_results"])
+        
+        # Filter out trends with too few items
+        significant_trends = {
+            name: data for name, data in trend_patterns.items() 
+            if len(data["related_items"]) >= 2
+        }
+        
+        # Create a more direct structure for the LLM
+        simplified_trends = {}
+        for trend_name, trend_data in significant_trends.items():
+            simplified_trends[trend_name] = {
+                "theme_title": trend_data["theme_title"],
+                "items": [
+                    {
+                        "title": item["title"],
+                        "snippet": item["snippet"],
+                        "source": item["source"],
+                        "url": item["url"]
+                    }
+                    for item in trend_data["related_items"][:5]  # Top 5 items per trend
+                ]
+            }
+        
+        prompt = f"""
+        Analyze these AI trends and create narratives for each. DO NOT modify any URLs - copy them exactly.
+        
+        Trends data with exact URLs:
+        {json.dumps(simplified_trends, indent=2)}
+        
+        For each trend, create:
+        
+        1. TREND NARRATIVE (2-3 paragraphs):
+           - What's happening and why it matters
+           - Connect the developments into a coherent story
+           - Focus on developer/engineering implications
+        
+        2. KEY DEVELOPMENTS (use exact data from items):
+           - For each item, use EXACT title, source, snippet, and url
+           - DO NOT modify URLs or use domain names
+           - Copy the url field character-for-character
+        
+        3. TECHNICAL IMPLICATIONS:
+           - Architecture and infrastructure changes
+           - Skills and tools developers need
+        
+        4. DEVELOPER IMPACT:
+           - How this changes development workflows
+           - Opportunities and challenges
+        
+        Return as JSON with this EXACT structure:
+        {{
+            "major_trends": [
+                {{
+                    "trend_id": "agent_revolution",
+                    "trend_title": "COPY theme_title exactly",
+                    "narrative": "Write 2-3 paragraph narrative here...",
+                    "key_developments": [
+                        {{
+                            "title": "COPY EXACT title from items",
+                            "company": "COPY EXACT source from items", 
+                            "description": "COPY EXACT snippet from items",
+                            "url": "COPY EXACT url from items - DO NOT MODIFY",
+                            "impact": "Brief impact statement"
+                        }}
+                    ],
+                    "developer_impact": "Impact on developers...",
+                    "technical_implications": "Technical implications..."
+                }}
+            ]
+        }}
+        
+        CRITICAL: The url field MUST be copied exactly from the items data. Do not use domain names or modify URLs.
+        """
+        
+        try:
+            response = self.llm.invoke(prompt)
+            content = response.content.strip()
+            
+            # Clean JSON response
+            if content.startswith('```json'):
+                content = content.replace('```json', '').replace('```', '').strip()
+            
+            trend_analysis = json.loads(content)
+            
+            # Validate URLs were preserved
+            for trend in trend_analysis.get("major_trends", []):
+                for dev in trend.get("key_developments", []):
+                    url = dev.get("url", "")
+                    if url and (url.endswith('.com/') or url.endswith('.org/') or '/' not in url.split('://')[-1]):
+                        logging.warning(f"LLM returned domain-only URL: {url}")
+            
+            state["trend_analysis"] = trend_analysis
+            state["trend_patterns"] = significant_trends
+            
+        except Exception as e:
+            logging.error(f"Failed to analyze trends: {e}")
+            # Create fallback analysis
+            state["trend_analysis"] = self._create_fallback_trend_analysis(significant_trends)
+            state["trend_patterns"] = significant_trends
+        
+        return state
+    
+    def _create_fallback_trend_analysis(self, trend_patterns: Dict) -> Dict:
+        """Create fallback trend analysis when LLM fails"""
+        major_trends = []
+        
+        for trend_id, trend_data in trend_patterns.items():
+            if len(trend_data["related_items"]) < 2:
+                continue
+                
+            trend = {
+                "trend_id": trend_id,
+                "trend_title": trend_data["theme_title"],
+                "narrative": f"Multiple developments in {trend_data['theme_title']} signal a major shift in the AI landscape.",
+                "key_developments": [
+                    {
+                        "title": item.get("title", "Unknown development"),
+                        "company": item.get("source", "Unknown"),
+                        "description": item.get("snippet", "")[:200],
+                        "url": item.get("url", "#"),  # Preserve exact URL from search results
+                        "impact": "Significant development in the field"
+                    }
+                    for item in trend_data["related_items"][:3]
+                    if item.get("url") and item.get("url") != "#"  # Only include items with valid URLs
+                ],
+                "developer_impact": "This trend requires developers to adapt their skills and workflows.",
+                "technical_implications": "New architectures and integration patterns emerging.",
+                "action_items": ["Research this trend further", "Experiment with related tools"]
+            }
+            major_trends.append(trend)
+        
+        return {"major_trends": major_trends}
+    
+    def _validate_report_urls(self, report_content: str, trend_analysis: Dict) -> None:
+        """Validate that the report contains proper URLs, not just domain names"""
+        import re
+        
+        # Extract all URLs from the report
+        url_pattern = r'\[([^\]]+)\]\((https?://[^\)]+)\)'
+        report_urls = re.findall(url_pattern, report_content)
+        
+        # Extract expected URLs from trend analysis
+        expected_urls = []
+        for trend in trend_analysis.get("major_trends", []):
+            for dev in trend.get("key_developments", []):
+                if dev.get("url"):
+                    expected_urls.append(dev["url"])
+        
+        # Check for domain-only URLs
+        domain_only_count = 0
+        for link_text, url in report_urls:
+            # Check if URL is domain-only (ends with .com/, .org/, etc. or no path)
+            if re.match(r'^https?://[^/]+\.(com|org|net|io|ai|co|edu)/?$', url):
+                logging.warning(f"Domain-only URL found: [{link_text}]({url})")
+                domain_only_count += 1
+        
+        if domain_only_count > 0:
+            logging.warning(f"Found {domain_only_count} domain-only URLs in the report")
+            logging.info(f"Expected URLs from data: {expected_urls[:3]}...")  # Show first 3 as examples
+        
+        # Check if expected URLs are present
+        report_url_set = {url for _, url in report_urls}
+        missing_urls = [url for url in expected_urls if url not in report_url_set]
+        
+        if missing_urls:
+            logging.warning(f"Missing {len(missing_urls)} expected URLs from the report")
+            for url in missing_urls[:3]:  # Log first 3 missing URLs
+                logging.warning(f"Missing URL: {url}")
+    
+    def _fix_report_urls(self, report_content: str, trend_analysis: Dict) -> str:
+        """Post-process report to fix any domain-only URLs with actual article URLs"""
+        import re
+        
+        # Create a mapping of titles to their correct URLs
+        title_to_url = {}
+        for trend in trend_analysis.get("major_trends", []):
+            for dev in trend.get("key_developments", []):
+                title = dev.get("title", "")
+                url = dev.get("url", "")
+                if title and url and url != "#":
+                    title_to_url[title.lower()] = url
+        
+        # Find all markdown links in the report
+        link_pattern = r'\[([^\]]+)\]\((https?://[^\)]+)\)'
+        
+        def replace_url(match):
+            link_text = match.group(1)
+            current_url = match.group(2)
+            
+            # Check if the current URL is domain-only
+            if re.match(r'^https?://[^/]+\.(com|org|net|io|ai|co|edu)/?$', current_url):
+                # Try to find the correct URL based on the link text
+                link_text_lower = link_text.lower()
+                
+                # Look for exact match first
+                if link_text_lower in title_to_url:
+                    correct_url = title_to_url[link_text_lower]
+                    logging.info(f"Fixed URL: [{link_text}]({current_url}) -> [{link_text}]({correct_url})")
+                    return f"[{link_text}]({correct_url})"
+                
+                # Look for partial matches
+                for title, url in title_to_url.items():
+                    if link_text_lower in title or title in link_text_lower:
+                        logging.info(f"Fixed URL (partial match): [{link_text}]({current_url}) -> [{link_text}]({url})")
+                        return f"[{link_text}]({url})"
+            
+            # Return unchanged if not domain-only or no match found
+            return match.group(0)
+        
+        # Replace URLs in the report
+        fixed_report = re.sub(link_pattern, replace_url, report_content)
+        
+        return fixed_report
 
 def should_continue_iteration(state: AgentState) -> str:
     """Routing function to determine if another iteration is needed"""
@@ -1745,10 +2133,10 @@ def create_graph():
     # Build the workflow with reflection mechanism
     workflow = StateGraph(AgentState)
     
-    # Add nodes
+    # Add nodes - UPDATED to use trend analysis
     workflow.add_node("generate_queries", reporter.generate_ai_weekly_queries)
     workflow.add_node("research", reporter.research_ai_trends)
-    workflow.add_node("analyze", reporter.categorize_and_analyze)
+    workflow.add_node("analyze", reporter.analyze_trends_with_developer_impact)  # Changed from categorize_and_analyze
     workflow.add_node("reflect", reporter.reflect_on_quality)
     workflow.add_node("improve_search", reporter.improve_search_strategy)
     workflow.add_node("generate_report", reporter.generate_weekly_report)

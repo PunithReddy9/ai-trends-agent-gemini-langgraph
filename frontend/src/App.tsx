@@ -80,7 +80,7 @@ function App() {
       // Poll for completion
       let completed = false;
       let attempts = 0;
-      const maxAttempts = 60; // 2 minutes timeout
+      const maxAttempts = 90; // 3 minutes timeout (was 60)
       
       while (!completed && attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
@@ -208,7 +208,7 @@ function App() {
                   <p>🔍 Searching for latest AI developments...</p>
                   <p>📊 Analyzing and categorizing content...</p>
                   <p>📝 Generating comprehensive report...</p>
-                  <p className="text-xs text-blue-600">This may take 1-2 minutes...</p>
+                  <p className="text-xs text-blue-600">This may take 2-3 minutes...</p>
                 </div>
               </div>
             )}

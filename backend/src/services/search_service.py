@@ -76,7 +76,6 @@ class GoogleSearchService:
             "huggingface.co": ["Hugging Face AI models", "Hugging Face research", "Hugging Face announcements"],
             "github.com": ["GitHub AI projects", "GitHub research", "GitHub announcements"],
             # Research Sources
-            "arxiv.org": ["arXiv AI papers", "arXiv research papers", "arXiv artificial intelligence"],
             "papers.nips.cc": ["NeurIPS papers", "NeurIPS research", "NeurIPS conference"],
             # Technical Journalism
             "technologyreview.mit.edu": ["MIT Technology Review", "AI technology analysis", "emerging technology news"],
@@ -210,12 +209,10 @@ class GoogleSearchService:
         seen_domains = {}
         deduplicated = []
         
-        # Sort by source diversity (prefer non-arxiv sources first)
+        # Sort by source diversity
         def source_priority(result):
             domain = result.get('source', '').lower()
-            if 'arxiv' in domain:
-                return 2  # Lower priority
-            elif any(news in domain for news in ['techcrunch', 'venturebeat', 'wired']):
+            if any(news in domain for news in ['techcrunch', 'venturebeat', 'wired']):
                 return 0  # Highest priority
             else:
                 return 1  # Medium priority

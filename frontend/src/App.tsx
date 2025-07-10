@@ -12,6 +12,7 @@ interface ReportMetadata {
   categories_covered: number;
   top_sources: string[];
   trending_topics: string[];
+  export_path?: string;
 }
 
 interface AITrendsReport {
@@ -20,6 +21,7 @@ interface AITrendsReport {
   metadata: ReportMetadata;
   generated_at: string;
   date_range: string;
+  export_path?: string;
   error?: string;
 }
 
@@ -98,7 +100,8 @@ function App() {
             report: state.values.weekly_report || 'Report generation completed but content not found',
             metadata: state.values.report_metadata || {},
             generated_at: state.values.generation_timestamp || new Date().toISOString(),
-            date_range: state.values.report_date_range || 'Past Week'
+            date_range: state.values.report_date_range || 'Past Week',
+            export_path: state.values.export_path || ''
           };
           
           setReport(reportData);
@@ -260,6 +263,15 @@ function App() {
                 <div className="text-xs text-gray-500 font-medium">
                   {report.date_range || 'Past Week'}
                 </div>
+                {report.export_path && (
+                  <div className="mt-2">
+                    <Badge variant="outline" className="text-xs">
+                      📁 Exported: {report.export_path.includes('output') ? 
+                        `output/${report.export_path.split('/').pop()}` : 
+                        report.export_path.split('/').pop()}
+                    </Badge>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

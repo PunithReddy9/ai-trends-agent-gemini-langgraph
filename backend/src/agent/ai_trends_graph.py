@@ -40,7 +40,7 @@ class AITrendsReporter:
         Return as JSON array of strings.
         
         Example format:
-        ["AI research papers arxiv past week January 2025", "new language model releases this week 2025"]
+        ["AI research papers past week January 2025", "new language model releases this week 2025"]
         """
         
         response = self.llm.invoke(prompt)
@@ -58,7 +58,7 @@ class AITrendsReporter:
                 "computer vision breakthrough January 2025",
                 "large language model update past week",
                 "AI tool launch announcement 2025",
-                "deep learning research paper arxiv week"
+                "deep learning research paper week"
             ]
         
         return {
@@ -73,7 +73,6 @@ class AITrendsReporter:
         # For now, showing the structure and priority sources
         
         priority_domains = [
-            "arxiv.org",
             "ai.googleblog.com", 
             "openai.com/blog",
             "blog.anthropic.com",

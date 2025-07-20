@@ -1,0 +1,989 @@
+{
+  "metadata": {
+    "timestamp": "2025-07-16T14:08:12.513354",
+    "total_articles": 35,
+    "data_structure_version": "1.0"
+  },
+  "articles": [
+    {
+      "id": "azure.microsoft.com_6528",
+      "title": "Azure updates | Microsoft Azure",
+      "url": "https://azure.microsoft.com/en-us/updates",
+      "source": "azure.microsoft.com",
+      "domain": "azure.microsoft.com",
+      "snippet": "9 hours ago ... ... Azure AI Services · Azure Machine Learning. Databases + analytics. Databases + analytics. Azure Cosmos DB · Azure SQL · Azure Database for PostgreSQL · Azure ...",
+      "date_published": "2025-07-16T14:06:48.788020",
+      "date_fetched": "2025-07-16T14:08:12.513371",
+      "search_metadata": {
+        "from_preferred_source": true,
+        "source_category": "azure.microsoft.com",
+        "url_quality": "good",
+        "relevance_score": 38.0,
+        "cross_source_frequency": 2
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "azure.microsoft.com_8207",
+      "title": "Azure updates | Microsoft Azure",
+      "url": "https://azure.microsoft.com/updates?filters=%5B%22Azure+Firewall%22%5D",
+      "source": "azure.microsoft.com",
+      "domain": "azure.microsoft.com",
+      "snippet": "7 days ago ... ... Azure AI Services · Azure Machine Learning. Databases + analytics. Databases + ... In an announcement earlier this year, these capabilities were launched ...",
+      "date_published": "2025-07-16T14:06:48.788096",
+      "date_fetched": "2025-07-16T14:08:12.513426",
+      "search_metadata": {
+        "from_preferred_source": true,
+        "source_category": "azure.microsoft.com",
+        "url_quality": "poor",
+        "relevance_score": 38.0,
+        "cross_source_frequency": 2
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": false
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "azure.microsoft.com_4660",
+      "title": "Oracle on Azure | Microsoft Azure",
+      "url": "https://azure.microsoft.com/en-us/solutions/oracle",
+      "source": "azure.microsoft.com",
+      "domain": "azure.microsoft.com",
+      "snippet": "5 days ago ... ... Azure AI Services · Azure Machine Learning. Databases + analytics. Databases + ... article. Two women sitting at desks and having a conversation. Oracle News ...",
+      "date_published": "2025-07-16T14:06:48.788071",
+      "date_fetched": "2025-07-16T14:08:12.513457",
+      "search_metadata": {
+        "from_preferred_source": true,
+        "source_category": "azure.microsoft.com",
+        "url_quality": "good",
+        "relevance_score": 34.0,
+        "cross_source_frequency": 0
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "azure.microsoft.com_9772",
+      "title": "Mises à jour Azure | Microsoft Azure",
+      "url": "https://azure.microsoft.com/fr-ca/updates",
+      "source": "azure.microsoft.com",
+      "domain": "azure.microsoft.com",
+      "snippet": "6 days ago ... ... Azure AI Services · Azure Machine Learning. Bases de données + Analyse Bases de données + Analyse. Azure Cosmos DB · Azure SQL · Azure Database pour PostgreSQL ...",
+      "date_published": "2025-07-16T14:06:48.788079",
+      "date_fetched": "2025-07-16T14:08:12.513484",
+      "search_metadata": {
+        "from_preferred_source": true,
+        "source_category": "azure.microsoft.com",
+        "url_quality": "good",
+        "relevance_score": 34.0,
+        "cross_source_frequency": 0
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "aws.amazon.com_6655",
+      "title": "Advanced (300) – Artificial Intelligence",
+      "url": "https://aws.amazon.com/blogs/machine-learning/category/learning-levels/advanced-300/feed/",
+      "source": "aws.amazon.com",
+      "domain": "aws.amazon.com",
+      "snippet": "2 days ago ... assistant, Part 1: Text-to-SQL with Amazon Bedrock Agents In this post, we ... AWS AI Services and Google Cloud Certified Professional Machine Learning ...",
+      "date_published": "2025-07-16T14:06:47.543347",
+      "date_fetched": "2025-07-16T14:08:12.513508",
+      "search_metadata": {
+        "from_preferred_source": true,
+        "source_category": "aws.amazon.com",
+        "url_quality": "good",
+        "relevance_score": 27.0,
+        "cross_source_frequency": 0
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "aws.amazon.com_5648",
+      "title": "Technical How-to – Artificial Intelligence",
+      "url": "https://aws.amazon.com/blogs/machine-learning/category/post-types/technical-how-to/feed/",
+      "source": "aws.amazon.com",
+      "domain": "aws.amazon.com",
+      "snippet": "5 days ago ... ... news articles, and more. A classic approach to extracting information from ... AWS AI Services and Google Cloud Certified Professional Machine Learning ...",
+      "date_published": "2025-07-16T14:06:47.543355",
+      "date_fetched": "2025-07-16T14:08:12.513537",
+      "search_metadata": {
+        "from_preferred_source": true,
+        "source_category": "aws.amazon.com",
+        "url_quality": "good",
+        "relevance_score": 27.0,
+        "cross_source_frequency": 0
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "aws.amazon.com_2721",
+      "title": "Partner solutions | Artificial Intelligence",
+      "url": "https://aws.amazon.com/blogs/machine-learning/category/post-types/partner-solutions/",
+      "source": "aws.amazon.com",
+      "domain": "aws.amazon.com",
+      "snippet": "1 day ago ... In this post, we discuss how AWS and DXC used Amazon Connect and other AWS AI services to deliver near real-time V2V translation capabilities. Appian ...",
+      "date_published": "2025-07-16T14:06:47.543301",
+      "date_fetched": "2025-07-16T14:08:12.513564",
+      "search_metadata": {
+        "from_preferred_source": true,
+        "source_category": "aws.amazon.com",
+        "url_quality": "good",
+        "relevance_score": 26.0,
+        "cross_source_frequency": 0
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "aws.amazon.com_8489",
+      "title": "Amazon Athena – Artificial Intelligence",
+      "url": "https://aws.amazon.com/blogs/machine-learning/category/analytics/amazon-athena/feed/",
+      "source": "aws.amazon.com",
+      "domain": "aws.amazon.com",
+      "snippet": "7 days ago ... ... post, we discuss how Parcel Perform incorporated generative AI, data ... AWS AI services and Amazon HealthLake can help store, transform, query, and ...",
+      "date_published": "2025-07-16T14:06:47.543388",
+      "date_fetched": "2025-07-16T14:08:12.513590",
+      "search_metadata": {
+        "from_preferred_source": true,
+        "source_category": "aws.amazon.com",
+        "url_quality": "good",
+        "relevance_score": 26.0,
+        "cross_source_frequency": 0
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "liquid.ai_3300",
+      "title": "Liquid AI: Build efficient general-purpose AI at every scale.",
+      "url": "https://www.liquid.ai/blog/liquid-ai-launches-leap-and-apollo-bringing-edge-ai-to-every-developer",
+      "source": "liquid.ai",
+      "domain": "liquid.ai",
+      "snippet": "9 hours ago ... We build efficient general-purpose AI at every scale. Liquid Foundation Models (LFMs) are a new generation of generative AI models that achieve ...",
+      "date_published": "2025-07-16T14:07:04.561451",
+      "date_fetched": "2025-07-16T14:08:12.513617",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "poor",
+        "relevance_score": 23.0,
+        "cross_source_frequency": 8
+      },
+      "url_enhancement": {
+        "was_enhanced": true,
+        "original_url": "https://www.liquid.ai/",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "liquid.ai_3300",
+      "title": "Liquid AI: Build efficient general-purpose AI at every scale.",
+      "url": "https://www.liquid.ai/blog/liquid-ai-launches-leap-and-apollo-bringing-edge-ai-to-every-developer",
+      "source": "liquid.ai",
+      "domain": "liquid.ai",
+      "snippet": "9 hours ago ... We build efficient general-purpose AI at every scale. Liquid Foundation Models (LFMs) are a new generation of generative AI models that achieve ...",
+      "date_published": "2025-07-16T14:07:05.067637",
+      "date_fetched": "2025-07-16T14:08:12.513640",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "poor",
+        "relevance_score": 23.0,
+        "cross_source_frequency": 8
+      },
+      "url_enhancement": {
+        "was_enhanced": true,
+        "original_url": "https://www.liquid.ai/",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "liquid.ai_3300",
+      "title": "Liquid AI: Build efficient general-purpose AI at every scale.",
+      "url": "https://www.liquid.ai/blog/liquid-ai-launches-leap-and-apollo-bringing-edge-ai-to-every-developer",
+      "source": "liquid.ai",
+      "domain": "liquid.ai",
+      "snippet": "9 hours ago ... We build efficient general-purpose AI at every scale. Liquid Foundation Models (LFMs) are a new generation of generative AI models that achieve ...",
+      "date_published": "2025-07-16T14:07:08.466114",
+      "date_fetched": "2025-07-16T14:08:12.513674",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "unknown",
+        "relevance_score": 23.0,
+        "cross_source_frequency": 8
+      },
+      "url_enhancement": {
+        "was_enhanced": true,
+        "original_url": "https://www.liquid.ai/",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "liquid.ai_3300",
+      "title": "Liquid AI: Build efficient general-purpose AI at every scale.",
+      "url": "https://www.liquid.ai/blog/liquid-ai-launches-leap-and-apollo-bringing-edge-ai-to-every-developer",
+      "source": "liquid.ai",
+      "domain": "liquid.ai",
+      "snippet": "9 hours ago ... We build efficient general-purpose AI at every scale. Liquid Foundation Models (LFMs) are a new generation of generative AI models that achieve ...",
+      "date_published": "2025-07-16T14:07:04.049188",
+      "date_fetched": "2025-07-16T14:08:12.513698",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "poor",
+        "relevance_score": 22.5,
+        "cross_source_frequency": 8
+      },
+      "url_enhancement": {
+        "was_enhanced": true,
+        "original_url": "https://www.liquid.ai/",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "en.wikipedia.org_4411",
+      "title": "Gemini (chatbot) - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Gemini_(chatbot)",
+      "source": "en.wikipedia.org",
+      "domain": "en.wikipedia.org",
+      "snippet": "9 hours ago ... Gemini is a generative artificial intelligence chatbot developed by Google. Based on the large language model (LLM) of the same name, it was launched in ...",
+      "date_published": "2025-07-16T14:07:07.213874",
+      "date_fetched": "2025-07-16T14:08:12.513720",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 22.0,
+        "cross_source_frequency": 4
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "radicaldatascience.wordpress.com_4882",
+      "title": "Data Science | Radical Data Science",
+      "url": "https://radicaldatascience.wordpress.com/tag/data-science/",
+      "source": "radicaldatascience.wordpress.com",
+      "domain": "radicaldatascience.wordpress.com",
+      "snippet": "9 hours ago ... [7/15/2025] AWS previews Kiro IDE for developers who are over vibe coding – Kiro is a Claude-powered “agentic IDE” that addresses the quality problems of AI- ...",
+      "date_published": "2025-07-16T14:07:00.375984",
+      "date_fetched": "2025-07-16T14:08:12.513745",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 21.0,
+        "cross_source_frequency": 4
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "liquid.ai_3300",
+      "title": "Liquid AI: Build efficient general-purpose AI at every scale.",
+      "url": "https://www.liquid.ai/blog/liquid-ai-launches-leap-and-apollo-bringing-edge-ai-to-every-developer",
+      "source": "liquid.ai",
+      "domain": "liquid.ai",
+      "snippet": "9 hours ago ... We build efficient general-purpose AI at every scale. Liquid Foundation Models (LFMs) are a new generation of generative AI models that achieve ...",
+      "date_published": "2025-07-16T14:07:03.479494",
+      "date_fetched": "2025-07-16T14:08:12.513771",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "poor",
+        "relevance_score": 21.0,
+        "cross_source_frequency": 8
+      },
+      "url_enhancement": {
+        "was_enhanced": true,
+        "original_url": "https://www.liquid.ai/",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "radicaldatascience.wordpress.com_4882",
+      "title": "Data Science | Radical Data Science",
+      "url": "https://radicaldatascience.wordpress.com/tag/data-science/",
+      "source": "radicaldatascience.wordpress.com",
+      "domain": "radicaldatascience.wordpress.com",
+      "snippet": "9 hours ago ... – showcasing advances across numerous capabilities, including coding, reasoning, multimodal understanding, long context use, and others. These improvements in ...",
+      "date_published": "2025-07-16T14:06:56.141788",
+      "date_fetched": "2025-07-16T14:08:12.513792",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 20.5,
+        "cross_source_frequency": 4
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "en.wikipedia.org_4411",
+      "title": "Gemini (chatbot) - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Gemini_(chatbot)",
+      "source": "en.wikipedia.org",
+      "domain": "en.wikipedia.org",
+      "snippet": "9 hours ago ... Gemini is a generative artificial intelligence chatbot developed by Google. Based on the large language model (LLM) of the same name, it was launched in ...",
+      "date_published": "2025-07-16T14:07:05.067693",
+      "date_fetched": "2025-07-16T14:08:12.513818",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 20.5,
+        "cross_source_frequency": 4
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "liquid.ai_3300",
+      "title": "Liquid AI: Build efficient general-purpose AI at every scale.",
+      "url": "https://www.liquid.ai/blog/liquid-ai-launches-leap-and-apollo-bringing-edge-ai-to-every-developer",
+      "source": "liquid.ai",
+      "domain": "liquid.ai",
+      "snippet": "9 hours ago ... We build efficient general-purpose AI at every scale. Liquid Foundation Models (LFMs) are a new generation of generative AI models that achieve ...",
+      "date_published": "2025-07-16T14:06:59.449992",
+      "date_fetched": "2025-07-16T14:08:12.513841",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "poor",
+        "relevance_score": 19.5,
+        "cross_source_frequency": 8
+      },
+      "url_enhancement": {
+        "was_enhanced": true,
+        "original_url": "https://www.liquid.ai/",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "en.wikipedia.org_4411",
+      "title": "Gemini (chatbot) - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Gemini_(chatbot)",
+      "source": "en.wikipedia.org",
+      "domain": "en.wikipedia.org",
+      "snippet": "9 hours ago ... Gemini is a generative artificial intelligence chatbot developed by Google. Based on the large language model (LLM) of the same name, it was launched in ...",
+      "date_published": "2025-07-16T14:07:04.049215",
+      "date_fetched": "2025-07-16T14:08:12.513863",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 19.0,
+        "cross_source_frequency": 4
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "liquid.ai_3300",
+      "title": "Liquid AI: Build efficient general-purpose AI at every scale.",
+      "url": "https://www.liquid.ai/blog/liquid-ai-launches-leap-and-apollo-bringing-edge-ai-to-every-developer",
+      "source": "liquid.ai",
+      "domain": "liquid.ai",
+      "snippet": "9 hours ago ... We build efficient general-purpose AI at every scale. Liquid Foundation Models (LFMs) are a new generation of generative AI models that achieve ...",
+      "date_published": "2025-07-16T14:06:58.728647",
+      "date_fetched": "2025-07-16T14:08:12.513885",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "poor",
+        "relevance_score": 18.0,
+        "cross_source_frequency": 8
+      },
+      "url_enhancement": {
+        "was_enhanced": true,
+        "original_url": "https://www.liquid.ai/",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "radicaldatascience.wordpress.com_4882",
+      "title": "Data Science | Radical Data Science",
+      "url": "https://radicaldatascience.wordpress.com/tag/data-science/",
+      "source": "radicaldatascience.wordpress.com",
+      "domain": "radicaldatascience.wordpress.com",
+      "snippet": "9 hours ago ... ... performance and storage costs. [7/14/2025] New Research: Smaller Models Match GPT-4 in Retrieval w/o Re-Training – The new research which: proves the power ...",
+      "date_published": "2025-07-16T14:06:55.548009",
+      "date_fetched": "2025-07-16T14:08:12.513907",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 17.0,
+        "cross_source_frequency": 4
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "hub.docker.com_3285",
+      "title": "Docker Hub Container Image Library | App Containerization",
+      "url": "https://hub.docker.com/",
+      "source": "hub.docker.com",
+      "domain": "hub.docker.com",
+      "snippet": "9 hours ago ... Official Docker images for the machine learning framework TensorFlow (http://www.tensorflow.org). Pulls. 50M+. Stars. 2782. Last Updated. about 8 hours. image.",
+      "date_published": "2025-07-16T14:07:06.500196",
+      "date_fetched": "2025-07-16T14:08:12.513931",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "poor",
+        "relevance_score": 17.0,
+        "cross_source_frequency": 3
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": true,
+        "is_valid_article": false
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "en.wikipedia.org_4411",
+      "title": "Gemini (chatbot) - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Gemini_(chatbot)",
+      "source": "en.wikipedia.org",
+      "domain": "en.wikipedia.org",
+      "snippet": "9 hours ago ... Gemini is a generative artificial intelligence chatbot developed by Google. Based on the large language model (LLM) of the same name, it was launched in ...",
+      "date_published": "2025-07-16T14:06:59.450033",
+      "date_fetched": "2025-07-16T14:08:12.513943",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 16.0,
+        "cross_source_frequency": 4
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "ai.google.dev_9290",
+      "title": "Embeddings | Gemini API | Google AI for Developers",
+      "url": "https://ai.google.dev/gemini-api/docs/embeddings",
+      "source": "ai.google.dev",
+      "domain": "ai.google.dev",
+      "snippet": "9 hours ago ... Unlike generative AI models that create new content, the Gemini Embedding model is only intended to transform the format of your input data into a numerical ...",
+      "date_published": "2025-07-16T14:07:05.067794",
+      "date_fetched": "2025-07-16T14:08:12.513967",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 15.5,
+        "cross_source_frequency": 2
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "hub.docker.com_3285",
+      "title": "Docker Hub Container Image Library | App Containerization",
+      "url": "https://hub.docker.com/",
+      "source": "hub.docker.com",
+      "domain": "hub.docker.com",
+      "snippet": "9 hours ago ... Qwen3 is the latest Qwen LLM, built for top-tier coding, math, reasoning, and language tasks. Pulls. 10K+. Stars. 19. Last Updated. 27 days. image · Repository ...",
+      "date_published": "2025-07-16T14:07:05.778257",
+      "date_fetched": "2025-07-16T14:08:12.513989",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "poor",
+        "relevance_score": 15.5,
+        "cross_source_frequency": 3
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": true,
+        "is_valid_article": false
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "liquid.ai_3300",
+      "title": "Liquid AI: Build efficient general-purpose AI at every scale.",
+      "url": "https://www.liquid.ai/blog/liquid-ai-launches-leap-and-apollo-bringing-edge-ai-to-every-developer",
+      "source": "liquid.ai",
+      "domain": "liquid.ai",
+      "snippet": "9 hours ago ... We build efficient general-purpose AI at every scale. Liquid Foundation Models (LFMs) are a new generation of generative AI models that achieve ...",
+      "date_published": "2025-07-16T14:06:57.298713",
+      "date_fetched": "2025-07-16T14:08:12.513998",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "poor",
+        "relevance_score": 15.0,
+        "cross_source_frequency": 8
+      },
+      "url_enhancement": {
+        "was_enhanced": true,
+        "original_url": "https://www.liquid.ai/",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "shrm.org_5490",
+      "title": "Artificial Intelligence in the Workplace",
+      "url": "https://www.shrm.org/topics-tools/topics/artificial-intelligence-in-the-workplace",
+      "source": "shrm.org",
+      "domain": "shrm.org",
+      "snippet": "9 hours ago ... ... for leveraging AI as a tool to drive your bottom line. Attend AI + HI Conference 2025 opens in a new tab. Video Player is loading.",
+      "date_published": "2025-07-16T14:07:03.479481",
+      "date_fetched": "2025-07-16T14:08:12.514020",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 15.0,
+        "cross_source_frequency": 3
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "radicaldatascience.wordpress.com_4882",
+      "title": "Data Science | Radical Data Science",
+      "url": "https://radicaldatascience.wordpress.com/tag/data-science/",
+      "source": "radicaldatascience.wordpress.com",
+      "domain": "radicaldatascience.wordpress.com",
+      "snippet": "9 hours ago ... The tool aims to move beyond “vibe coding” and reduce the time developers spend debugging and reviewing AI-generated code. [7/15/2025] Cognition acquires ...",
+      "date_published": "2025-07-16T14:06:54.836007",
+      "date_fetched": "2025-07-16T14:08:12.514046",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 14.0,
+        "cross_source_frequency": 4
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "shrm.org_5490",
+      "title": "Artificial Intelligence in the Workplace",
+      "url": "https://www.shrm.org/topics-tools/topics/artificial-intelligence-in-the-workplace",
+      "source": "shrm.org",
+      "domain": "shrm.org",
+      "snippet": "9 hours ago ... House Proposal Would Block State AI Laws for 10 Years. A ... Quick Hits in AI News: Impaired Learning, White-Collar Shortage Each week ...",
+      "date_published": "2025-07-16T14:07:09.627796",
+      "date_fetched": "2025-07-16T14:08:12.514070",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "unknown",
+        "relevance_score": 13.5,
+        "cross_source_frequency": 3
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "redhat.com_2038",
+      "title": "The official Red Hat blog",
+      "url": "https://www.redhat.com/en/blog",
+      "source": "redhat.com",
+      "domain": "redhat.com",
+      "snippet": "9 hours ago ... New. Engage & learn. AI learning hub · AI partners · Services for AI. Hybrid cloud. Use cases. Artificial intelligence. Build, deploy, and monitor AI models and ...",
+      "date_published": "2025-07-16T14:06:59.450004",
+      "date_fetched": "2025-07-16T14:08:12.514102",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 13.0,
+        "cross_source_frequency": 2
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "theguardian.com_1592",
+      "title": "Artificial intelligence (AI) | The Guardian",
+      "url": "https://www.theguardian.com/technology/artificialintelligenceai",
+      "source": "theguardian.com",
+      "domain": "theguardian.com",
+      "snippet": "9 hours ago ... ... development · Obituaries. Artificial intelligence (AI). 15 July 2025. Dominic Murphy in uniform. Children investigated over Russian and Iranian plots against UK ...",
+      "date_published": "2025-07-16T14:07:03.479446",
+      "date_fetched": "2025-07-16T14:08:12.514126",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 13.0,
+        "cross_source_frequency": 2
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "hub.docker.com_3285",
+      "title": "Docker Hub Container Image Library | App Containerization",
+      "url": "https://hub.docker.com/",
+      "source": "hub.docker.com",
+      "domain": "hub.docker.com",
+      "snippet": "9 hours ago ... Categories. NetworkingSecurityLanguages & frameworksIntegration & deliveryMessage queuesAPI managementInternet of thingsMachine learning & AIDeveloper tools ...",
+      "date_published": "2025-07-16T14:07:04.049172",
+      "date_fetched": "2025-07-16T14:08:12.514151",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "poor",
+        "relevance_score": 12.5,
+        "cross_source_frequency": 3
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": true,
+        "is_valid_article": false
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "ai.google.dev_9290",
+      "title": "Embeddings | Gemini API | Google AI for Developers",
+      "url": "https://ai.google.dev/gemini-api/docs/embeddings",
+      "source": "ai.google.dev",
+      "domain": "ai.google.dev",
+      "snippet": "9 hours ago ... Open-Source Frameworks. LangChain & LangGraph · CrewAI · LlamaIndex. Google AI ... Secure AI Framework · Android Studio · Chrome DevTools · Colab · Firebase ...",
+      "date_published": "2025-07-16T14:07:04.561477",
+      "date_fetched": "2025-07-16T14:08:12.514159",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 12.5,
+        "cross_source_frequency": 2
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "shrm.org_5490",
+      "title": "Artificial Intelligence in the Workplace",
+      "url": "https://www.shrm.org/topics-tools/topics/artificial-intelligence-in-the-workplace",
+      "source": "shrm.org",
+      "domain": "shrm.org",
+      "snippet": "9 hours ago ... Noelle Russell, founder and CEO of the AI Leadership Institute ... Image for Other Tomorrowist Trends in the News: July 3, 2025.",
+      "date_published": "2025-07-16T14:07:01.614791",
+      "date_fetched": "2025-07-16T14:08:12.514181",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 12.0,
+        "cross_source_frequency": 3
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    },
+    {
+      "id": "tiktok.com_9801",
+      "title": "Chat Gpt Kali Linux Prompt | TikTok",
+      "url": "https://www.tiktok.com/discover/chat-gpt-kali-linux-prompt",
+      "source": "tiktok.com",
+      "domain": "tiktok.com",
+      "snippet": "2 days ago ... Whether you're trying to break through OpenAI's ChatGPT, Anthropic's Claude, Google's Gemini, or even “lesser-known” AIs like DeepSeek, this video shows you ...",
+      "date_published": "2025-07-16T14:06:55.548037",
+      "date_fetched": "2025-07-16T14:08:12.514206",
+      "search_metadata": {
+        "from_preferred_source": false,
+        "source_category": "",
+        "url_quality": "good",
+        "relevance_score": 10.0,
+        "cross_source_frequency": 0
+      },
+      "url_enhancement": {
+        "was_enhanced": false,
+        "original_url": "",
+        "is_domain_only": false,
+        "is_valid_article": true
+      },
+      "content": {
+        "has_full_content": false,
+        "content_length": 0,
+        "fetch_status": "not_fetched"
+      }
+    }
+  ]
+}

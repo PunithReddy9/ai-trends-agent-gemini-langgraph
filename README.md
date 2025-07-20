@@ -1,134 +1,152 @@
-# AI Trends Agent - LangGraph Powered Intelligence
+# AI Trends Weekly Reporter Agent
 
-This project demonstrates a fullstack AI trends analysis application using a React frontend and a LangGraph-powered backend agent. The agent is designed to research and analyze the latest AI trends, technological advancements, and industry developments by dynamically generating targeted search queries, gathering information from multiple sources, and synthesizing comprehensive reports with citations. This application serves as an example of building specialized AI research agents using LangGraph and Google's Gemini models.
+## Overview
+An intelligent AI agent that generates comprehensive weekly reports on the latest AI trends and developments, specifically tailored for developers and engineers.
 
-![AI Trends Agent](./ai-trends-agent.png)
+## Data Storage and URL Management
 
-## Features
+### JSON Data Structure
+The system now generates comprehensive JSON files alongside each report to provide complete visibility into data fetching and URL handling:
 
-- 💬 Fullstack application with a React frontend and LangGraph backend
-- 🧠 Specialized AI trends research agent powered by LangGraph
-- 🔍 Intelligent search query generation focused on AI developments and trends
-- 🌐 Comprehensive web research via Google Search API for latest AI news and updates
-- 🤔 Advanced reflection and analysis to identify knowledge gaps in AI trend coverage
-- 📊 Generates detailed AI trends reports with citations from authoritative sources
-- 🚀 Real-time tracking of emerging AI technologies, breakthroughs, and market movements
-- 🔄 Hot-reloading for both frontend and backend development
-
-## Project Structure
-
-The project is divided into two main directories:
-
--   `frontend/`: Contains the React application built with Vite for the AI trends dashboard
--   `backend/`: Contains the LangGraph/FastAPI application with the specialized AI trends research agent
-
-## Getting Started: Development and Local Testing
-
-Follow these steps to get the application running locally for development and testing.
-
-**1. Prerequisites:**
-
--   Node.js and npm (or yarn/pnpm)
--   Python 3.8+
--   **`GEMINI_API_KEY`**: The backend agent requires a Google Gemini API key.
--   **`GOOGLE_SEARCH_API_KEY`**: Required for web search functionality via Google Custom Search JSON API.
--   **`GOOGLE_SEARCH_ENGINE_ID`**: The Search Engine ID from your Programmable Search Engine.
-
-**API Setup:**
-1.  Navigate to the `backend/` directory.
-2.  Create a file named `.env` by copying the `backend/.env.example` file.
-3.  Open the `.env` file and add your API keys:
-    ```
-    GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
-    GOOGLE_SEARCH_API_KEY="YOUR_CUSTOM_SEARCH_API_KEY"
-    GOOGLE_SEARCH_ENGINE_ID="YOUR_SEARCH_ENGINE_ID"
-    ```
-
-**Getting Your API Keys:**
-- **Gemini API Key**: Get your key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-- **Custom Search API Key**: Get your key from the [Google Cloud Console](https://console.developers.google.com/apis/credentials)
-- **Search Engine ID**: Create a [Programmable Search Engine](https://programmablesearchengine.google.com/controlpanel/all) and find your Search Engine ID in the Basic section
-
-*Note: The Custom Search JSON API provides 100 free search queries per day. Additional requests cost $5 per 1000 queries, up to 10k queries per day.*
-
-**2. Install Dependencies:**
-
-**Backend:**
-
-```bash
-cd backend
-pip install .
+#### Article Data JSON (`*_article_data.json`)
+Contains complete metadata for every article fetched:
+```json
+{
+  "metadata": {
+    "timestamp": "2025-07-16T00:32:23.043090",
+    "total_articles": 45,
+    "data_structure_version": "1.0"
+  },
+  "articles": [
+    {
+      "id": "openai.com_1234",
+      "title": "OpenAI Releases New API Features",
+      "url": "https://openai.com/blog/new-api-features",
+      "source": "openai.com",
+      "snippet": "Brief description from search results...",
+      "date_published": "2025-07-15",
+      "date_fetched": "2025-07-16T00:32:23.043090",
+      "search_metadata": {
+        "from_preferred_source": true,
+        "source_category": "openai.com",
+        "url_quality": "good",
+        "relevance_score": 8.5,
+        "cross_source_frequency": 2
+      },
+      "content": {
+        "has_full_content": true,
+        "content_length": 2500,
+        "fetch_status": "success",
+        "raw_html_preview": "First 500 chars of HTML content...",
+        "fetch_timestamp": "2025-07-16T00:32:23.043090"
+      }
+    }
+  ]
+}
 ```
 
-**Frontend:**
-
-```bash
-cd frontend
-npm install
+#### URL Mapping JSON (`*_url_mapping.json`)
+Provides debugging information for URL quality issues:
+```json
+{
+  "metadata": {
+    "created_at": "2025-07-16T00:32:23.043090",
+    "purpose": "URL mapping for debugging domain-only URL issues"
+  },
+  "title_to_url_mapping": {
+    "OpenAI Releases New API Features": {
+      "url": "https://openai.com/blog/new-api-features",
+      "company": "OpenAI",
+      "is_domain_only": false,
+      "is_valid": true
+    }
+  },
+  "url_quality_report": {
+    "total_urls": 25,
+    "domain_only_urls": [
+      {"title": "Some Article", "url": "https://example.com/"}
+    ],
+    "high_quality_urls": [
+      {"title": "Good Article", "url": "https://openai.com/blog/article"}
+    ],
+    "missing_urls": ["Article Without URL"]
+  }
+}
 ```
 
-**3. Run Development Servers:**
+### URL Quality Management
 
-**Backend & Frontend:**
+#### URL Classification
+- **High Quality**: Direct article URLs with specific paths (`/blog/`, `/news/`, `/2025/`)
+- **Domain Only**: URLs ending with just domain (`https://openai.com/`)
+- **Poor Quality**: Search pages, constructed URLs, generic paths
+
+#### URL Validation Process
+1. **Initial Filtering**: Remove search pages and invalid URLs
+2. **Quality Assessment**: Mark URLs as 'good' or 'poor' quality
+3. **URL Improvement**: Re-search for better URLs when needed
+4. **Post-Processing**: Fix domain-only URLs in final report
+
+### Full Content Fetching (NEW)
+
+The system now supports fetching full article content for high-quality URLs:
+
+```python
+# Enable full content fetching
+enhanced_results = search_service.search_ai_content_with_full_fetch(query)
+
+# Check if content was fetched
+for result in enhanced_results:
+    if result.get('content_fetched'):
+        content = result['full_content']
+        print(f"Fetched {content['content_length']} characters from {result['url']}")
+```
+
+### Debugging URL Issues
+
+When you see warnings like:
+```
+WARNING:root:LLM returned domain-only URL: https://www.edweek.org/
+WARNING:root:Domain-only URL found: [Education Week](https://www.edweek.org/)
+WARNING:root:Missing 3 expected URLs from the report
+```
+
+Check the generated JSON files:
+1. `*_article_data.json` - Shows all fetched articles with their URLs
+2. `*_url_mapping.json` - Shows URL quality analysis and issues
+
+### Common URL Issues and Solutions
+
+1. **Domain-Only URLs**: LLM converts specific URLs to domain names
+   - **Solution**: Check `url_quality_report.domain_only_urls` in JSON
+   - **Fix**: Implement stricter URL preservation in prompts
+
+2. **Missing URLs**: Articles without proper URLs in search results
+   - **Solution**: Check `url_quality_report.missing_urls` in JSON
+   - **Fix**: Improve search queries or URL validation
+
+3. **Poor Quality URLs**: Search pages instead of article pages
+   - **Solution**: Check `search_metadata.url_quality` in JSON
+   - **Fix**: Enhance URL filtering and re-search logic
+
+## Usage
 
 ```bash
-make dev
+# Run the agent (now generates additional JSON files)
+python run_report.py
+
+# Output files generated:
+# - AI-Trends-Report-YYYY-MM-DD-HH-MM-SS.md (main report)
+# - AI-Trends-Report-YYYY-MM-DD-HH-MM-SS_article_data.json (complete data)
+# - AI-Trends-Report-YYYY-MM-DD-HH-MM-SS_url_mapping.json (URL debugging)
 ```
-This will run the backend and frontend development servers.    Open your browser and navigate to the frontend development server URL (e.g., `http://localhost:5173/app`).
 
-_Alternatively, you can run the backend and frontend development servers separately. For the backend, open a terminal in the `backend/` directory and run `langgraph dev`. The backend API will be available at `http://127.0.0.1:2024`. It will also open a browser window to the LangGraph UI. For the frontend, open a terminal in the `frontend/` directory and run `npm run dev`. The frontend will be available at `http://localhost:5173`._
+## Improvements Made
 
-## How the AI Trends Agent Works (High-Level)
+1. **Complete Data Visibility**: Every article's metadata now stored in JSON
+2. **URL Quality Tracking**: Detailed analysis of URL issues
+3. **Full Content Fetching**: Optional fetching of complete article content
+4. **Debugging Tools**: JSON files to trace URL problems
+5. **Enhanced Validation**: Multiple layers of URL quality checks
 
-The core of the backend is a specialized AI trends research agent defined in `backend/src/agent/graph.py`. It follows these steps:
-
-![Agent Flow](./agent.png)
-
-1.  **Generate AI-Focused Queries:** Based on your request, it generates targeted search queries focusing on recent AI developments, breakthroughs, research papers, industry news, and technological advancements using a Gemini model.
-2.  **Comprehensive AI Research:** For each query, it searches for the most recent and relevant information about AI trends, including:
-    - Latest research papers and publications
-    - Industry announcements and product launches
-    - Funding rounds and market developments
-    - Regulatory changes and policy updates
-    - Technical breakthroughs and innovations
-3.  **Trend Analysis & Gap Identification:** The agent analyzes the gathered information to identify emerging patterns, assess the significance of developments, and determine if additional research is needed to provide complete trend coverage.
-4.  **Iterative Deep Dive:** If knowledge gaps are identified or trends need further exploration, it generates follow-up queries and continues research (up to a configured maximum number of iterations).
-5.  **Comprehensive Report Generation:** The agent synthesizes all gathered information into a well-structured AI trends report, including trend analysis, impact assessments, and proper citations from authoritative sources.
-
-## Deployment
-
-In production, the backend server serves the optimized static frontend build. LangGraph requires a Redis instance and a Postgres database. Redis is used as a pub-sub broker to enable streaming real time output from background runs. Postgres is used to store assistants, threads, runs, persist thread state and long term memory, and to manage the state of the background task queue with 'exactly once' semantics. For more details on how to deploy the backend server, take a look at the [LangGraph Documentation](https://langchain-ai.github.io/langgraph/concepts/deployment_options/). Below is an example of how to build a Docker image that includes the optimized frontend build and the backend server and run it via `docker-compose`.
-
-_Note: For the docker-compose.yml example you need a LangSmith API key (get one from [LangSmith](https://smith.langchain.com/settings)), plus the Gemini API key, Custom Search API key, and Search Engine ID as described in the prerequisites section._
-
-_Note: If you are not running the docker-compose.yml example or exposing the backend server to the public internet, you update the `apiUrl` in the `frontend/src/App.tsx` file your host. Currently the `apiUrl` is set to `http://localhost:8123` for docker-compose or `http://localhost:2024` for development._
-
-**1. Build the Docker Image:**
-
-   Run the following command from the **project root directory**:
-   ```bash
-   docker build -t gemini-fullstack-langgraph -f Dockerfile .
-   ```
-**2. Run the Production Server:**
-
-   ```bash
-   GEMINI_API_KEY=<your_gemini_api_key> \
-   GOOGLE_SEARCH_API_KEY=<your_custom_search_api_key> \
-   GOOGLE_SEARCH_ENGINE_ID=<your_search_engine_id> \
-   LANGSMITH_API_KEY=<your_langsmith_api_key> \
-   docker-compose up
-   ```
-
-Open your browser and navigate to `http://localhost:8123/app/` to see the application. The API will be available at `http://localhost:8123`.
-
-## Technologies Used
-
-- [React](https://reactjs.org/) (with [Vite](https://vitejs.dev/)) - For the frontend user interface.
-- [Tailwind CSS](https://tailwindcss.com/) - For styling.
-- [Shadcn UI](https://ui.shadcn.com/) - For components.
-- [LangGraph](https://github.com/langchain-ai/langgraph) - For building the backend research agent.
-- [Google Gemini](https://ai.google.dev/models/gemini) - LLM for query generation, reflection, and answer synthesis.
-
-## License
-
-This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details. 
+This ensures you have complete transparency into what data is being fetched, how URLs are being handled, and where any issues might be occurring. 

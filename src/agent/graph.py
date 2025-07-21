@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import json
 import os
 import logging
+import time
 from urllib.parse import urlparse
 
 # Import search service
@@ -48,464 +49,345 @@ class AITrendsReporter:
         )
         self.search_service = GoogleSearchService()
         
-        # Natural language search terms for AI sources
-        self.natural_search_terms = {
-            # Technical/Research Sources - Convert URLs to natural language
-            "ai.googleblog.com": [
-                "Google AI research",
-                "Google AI blog",
-                "Google artificial intelligence research",
-                "Google AI announcements",
-                "Google DeepMind research"
-            ],
-            
-            "openai.com": [
-                "OpenAI research",
-                "OpenAI announcements",
-                "OpenAI ChatGPT updates",
-                "OpenAI blog",
-                "OpenAI latest research"
-            ],
-            
-            "blog.anthropic.com": [
-                "Anthropic AI research",
-                "Anthropic Claude updates",
-                "Anthropic safety research",
-                "Anthropic blog",
-                "Anthropic AI safety"
-            ],
-            
-            "research.microsoft.com": [
-                "Microsoft AI research",
-                "Microsoft research blog",
-                "Microsoft AI announcements",
-                "Microsoft research papers",
-                "Microsoft AI developments"
-            ],
-            
-            "ai.meta.com": [
-                "Meta AI research",
-                "Facebook AI research",
-                "Meta AI announcements",
-                "Meta AI blog",
-                "Meta artificial intelligence"
-            ],
-            
-            "deepmind.google": [
-                "Google DeepMind research",
-                "DeepMind AI research",
-                "DeepMind announcements",
-                "DeepMind blog",
-                "DeepMind breakthrough"
-            ],
-            
-            "huggingface.co": [
-                "Hugging Face AI models",
-                "Hugging Face research",
-                "Hugging Face blog",
-                "Hugging Face announcements",
-                "Hugging Face open source"
-            ],
-            
-            "github.com": [
-                "GitHub AI projects",
-                "GitHub research",
-                "GitHub blog",
-                "GitHub announcements",
-                "GitHub open source AI"
-            ],
-            
-            "papers.nips.cc": [
-                "NeurIPS papers",
-                "NeurIPS research",
-                "NeurIPS conference",
-                "NeurIPS machine learning",
-                "NeurIPS AI research"
-            ],
-            
-            "news.mit.edu": [
-                "MIT AI news",
-                "MIT research news",
-                "MIT artificial intelligence",
-                "MIT technology news",
-                "MIT AI breakthrough"
-            ],
-            
-            "the-decoder.com": [
-                "AI news decoder",
-                "AI industry news",
-                "artificial intelligence news",
-                "AI research news",
-                "AI technology updates"
-            ],
-            
-            "knowentry.com": [
-                "AI industry analysis",
-                "AI research insights",
-                "AI technology news",
-                "AI market analysis",
-                "AI business news"
-            ],
-            
-            # AI News Sites - NEW ADDITIONS
-            "ainews.com": [
-                "AI News latest updates",
-                "AI News breaking stories",
-                "AI News industry coverage",
-                "AI News technology updates",
-                "AI News announcements"
-            ],
-            
-            "reuters.com": [
-                "Reuters AI chip sales China",
-                "Reuters artificial intelligence GPU",
-                "Reuters AI hardware announcement", 
-                "Reuters machine learning news article",
-                "Reuters technology AI development story"
-            ],
-            
-            "news.ycombinator.com": [
-                "Hacker News AI discussions",
-                "Hacker News machine learning",
-                "Hacker News AI startups",
-                "Hacker News AI tools",
-                "Y Combinator AI news"
-            ],
-            
-            "kdnuggets.com": [
-                "KDnuggets AI tutorials",
-                "KDnuggets machine learning news",
-                "KDnuggets AI industry updates",
-                "KDnuggets data science AI",
-                "KDnuggets AI tools reviews"
-            ],
-            
-            "theverge.com": [
-                "The Verge AI news",
-                "The Verge artificial intelligence",
-                "The Verge AI technology",
-                "The Verge AI products",
-                "The Verge AI industry"
-            ],
-            
-            "arstechnica.com": [
-                "Ars Technica AI analysis",
-                "Ars Technica AI news",
-                "Ars Technica machine learning",
-                "Ars Technica AI research",
-                "Ars Technica AI developments"
-            ],
-            
-            "thenextweb.com": [
-                "TNW AI news",
-                "The Next Web AI startups",
-                "TNW artificial intelligence",
-                "TNW AI technology",
-                "TNW AI trends"
-            ],
-            
-            "zdnet.com": [
-                "ZDNet AI enterprise news",
-                "ZDNet artificial intelligence",
-                "ZDNet AI business",
-                "ZDNet AI technology",
-                "ZDNet AI updates"
-            ],
-            
-            "infoworld.com": [
-                "InfoWorld AI enterprise",
-                "InfoWorld AI development",
-                "InfoWorld machine learning",
-                "InfoWorld AI tools",
-                "InfoWorld AI platforms"
-            ],
-            
-            # Industry News Sources
-            "techcrunch.com": [
-                "TechCrunch AI news",
-                "startup AI news",
-                "tech industry news",
-                "AI startup funding",
-                "technology announcements"
-            ],
-            
-            "venturebeat.com": [
-                "VentureBeat AI news",
-                "enterprise AI news",
-                "AI business news",
-                "AI technology news",
-                "AI industry updates"
-            ],
-            
-            "theinformation.com": [
-                "tech industry analysis",
-                "AI business intelligence",
-                "tech insider news",
-                "AI market analysis",
-                "technology business news"
-            ],
-            
-            "technologyreview.mit.edu": [
-                "MIT Technology Review",
-                "AI technology analysis",
-                "emerging technology news",
-                "AI research analysis",
-                "technology innovation news"
-            ],
-            
-            "spectrum.ieee.org": [
-                "IEEE Spectrum AI",
-                "engineering AI news",
-                "technical AI news",
-                "AI engineering updates",
-                "IEEE artificial intelligence"
-            ],
-            
-            # Additional high-quality sources for better coverage
-            "towardsdatascience.com": [
-                "data science AI tutorials",
-                "machine learning guides",
-                "AI implementation tutorials",
-                "data science insights",
-                "AI technical guides"
-            ],
-            
-            "blog.google": [
-                "Google AI blog",
-                "Google research blog",
-                "Google technology blog",
-                "Google AI developments",
-                "Google machine learning"
-            ],
-            
-            "aws.amazon.com": [
-                "AWS AI services",
-                "Amazon AI announcements",
-                "AWS machine learning",
-                "Amazon AI research",
-                "AWS AI tools"
-            ],
-            
-            "azure.microsoft.com": [
-                "Azure AI services",
-                "Microsoft Azure AI",
-                "Azure machine learning",
-                "Microsoft cloud AI",
-                "Azure AI updates"
-            ],
-            
-            "developer.nvidia.com": [
-                "NVIDIA AI developer",
-                "NVIDIA GPU AI",
-                "NVIDIA AI tools",
-                "NVIDIA machine learning",
-                "NVIDIA AI platform"
-            ]
-        }
+        # Enhanced search service now handles source targeting internally
+        # No longer need to maintain natural language search terms mapping
         
 
     
     def generate_ai_weekly_queries(self, state: AgentState) -> AgentState:
-        """Generate trend-focused search queries with developer perspective"""
+        """Generate enhanced news-focused search queries for recent AI developments"""
+        generation_start_time = time.time()
+        
         current_date = datetime.now()
-        two_weeks_ago = current_date - timedelta(days=14)
+        one_week_ago = current_date - timedelta(days=7)
         
-        # Integrate the query writer prompt strategy from prompts.py
+        logging.info("🎯 Starting AI weekly query generation")
+        logging.info(f"   📅 Date range: {one_week_ago.strftime('%B %d')} to {current_date.strftime('%B %d, %Y')}")
+        logging.info(f"   🎯 Target: 12 news-focused queries")
+        
+        # Enhanced prompt for news-focused AI trend discovery
         prompt = f"""
-        Your goal is to generate strategic and effective web search queries optimized for Google Search API to identify AI TRENDS and PATTERNS.
+        Generate strategic Google Search queries optimized for finding RECENT AI NEWS ARTICLES and BLOG POSTS from the past week.
         
-        SEARCH STRATEGY GUIDELINES:
-        - Prioritize broad, general queries over site-specific searches
-        - Use natural language and common terminology
-        - Include temporal indicators for recent information
-        - Focus on mainstream news sources and official announcements
-        - Mix technical and business perspectives
+        TARGET: Recent articles, blog posts, and announcements from quality sources like:
+        - Company blogs: OpenAI, Anthropic, Google AI, Microsoft, Meta AI
+        - Tech news: TechCrunch, VentureBeat, The Verge, Ars Technica, Reuters  
+        - Research sources: MIT Technology Review, IEEE Spectrum
         
-        Date Range: {two_weeks_ago.strftime('%B %d')} to {current_date.strftime('%B %d, %Y')}
+        QUERY OPTIMIZATION FOR NEWS:
+        - Focus on actionable keywords: "announces", "releases", "launches", "introduces", "unveils"
+        - Include company names for official announcements
+        - Target specific AI domains: models, tools, APIs, frameworks, research
+        - Use news-friendly terms that journalists use in headlines
         
-        Generate queries to discover ORGANIC AI TRENDS focusing on:
+        Date Context: Past 7 days ({one_week_ago.strftime('%B %d')} to {current_date.strftime('%B %d, %Y')})
         
-        1. RECENT DEVELOPMENTS (not categories):
-           - What's NEW in the past 2 weeks in AI?
-           - What are companies LAUNCHING or ANNOUNCING?
-           - What BREAKTHROUGHS or ADVANCES occurred?
+        Generate 12 high-impact queries covering:
         
-        2. DEVELOPER IMPACT:
-           - Tools and APIs released
-           - Framework updates
-           - Integration opportunities
-           - Productivity enhancements
+        1. COMPANY ANNOUNCEMENTS (4 queries):
+           - Official product releases and updates from major AI companies
+           - New model launches and API announcements
+           
+        2. DEVELOPER TOOLS & APIS (4 queries):  
+           - New AI development tools and frameworks
+           - API releases and developer platform updates
+           
+        3. RESEARCH & BREAKTHROUGHS (2 queries):
+           - Significant research findings and technical advances
+           - Academic and industry research publications
+           
+        4. INDUSTRY NEWS & TRENDS (2 queries):
+           - Funding rounds, partnerships, industry movements
+           - Market analysis and business developments
         
-        3. INDUSTRY SHIFTS:
-           - Major partnerships
-           - Funding announcements
-           - Market changes
-           - Strategic moves
+        CRITICAL REQUIREMENTS:
+        - Each query must be 4-8 words for optimal Google News results
+        - Include time-sensitive action words (announces, releases, launches)
+        - Focus on specific, newsworthy events rather than general topics
+        - Target queries that news outlets would write headlines about
         
-        Query Optimization Rules:
-        - Use 3-8 words per query for optimal results
-        - Include terms like "launches", "releases", "announces", "introduces"
-        - Add temporal markers: "past 2 weeks", "last 2 weeks", "{current_date.strftime('%B %Y')}"
-        - Include company names when relevant
-        - Mix broad exploration with specific tool/product searches
+        Return exactly 12 queries as a JSON array, ordered by priority.
         
-        Create 15 diverse queries that will uncover the most important AI developments.
-        Focus on what's ACTUALLY happening, not predetermined categories.
-        
-        Return EXACTLY 15 queries as a JSON array. Queries should be ordered by priority.
-        
-        Current date: {current_date.strftime('%B %d, %Y')}
+        Example format: ["OpenAI announces new model", "AI coding tools released", "Google AI research breakthrough"]
         """
         
         try:
+            logging.info("   🤖 Invoking LLM for query generation")
+            llm_start_time = time.time()
+            
             response = self.llm.invoke(prompt)
+            
+            llm_duration = time.time() - llm_start_time
+            logging.info(f"   ⏱️  LLM response time: {llm_duration:.2f}s")
+            
             content = response.content.strip()
             
+            logging.info(f"   📏 Raw response length: {len(content)} characters")
+            logging.debug(f"   📄 Raw response preview: {content[:200]}...")
+            
             # Clean up JSON response
+            original_content = content
             if content.startswith('```json'):
                 content = content.replace('```json', '').replace('```', '').strip()
+                logging.info("   🧹 Cleaned JSON code block markers")
             elif content.startswith('```'):
                 content = content.replace('```', '').strip()
+                logging.info("   🧹 Cleaned generic code block markers")
             
             import re
             json_match = re.search(r'\[.*\]', content, re.DOTALL)
             if json_match:
                 content = json_match.group(0)
+                logging.info("   🎯 Extracted JSON array from response")
+            else:
+                logging.warning("   ⚠️  No JSON array pattern found in response")
             
+            logging.info(f"   📝 Attempting to parse JSON content")
             queries = json.loads(content)
             
-            if not isinstance(queries, list) or len(queries) != 15:
-                raise ValueError(f"Expected 15 queries, got {len(queries) if isinstance(queries, list) else 0}")
+            if not isinstance(queries, list):
+                raise ValueError(f"Expected list, got {type(queries).__name__}")
+            
+            if len(queries) < 10:
+                raise ValueError(f"Expected at least 10 queries, got {len(queries)}")
                 
-            queries = [str(q) for q in queries]
-            logging.info(f"Generated {len(queries)} strategic search queries")
+            queries = [str(q) for q in queries[:12]]  # Limit to 12 queries
             
-        except Exception as e:
-            logging.warning(f"Failed to parse queries: {e}")
-            # Use trend-focused fallback queries based on prompts.py strategy
-            current_month = current_date.strftime('%B %Y')
-            two_weeks_str = f"past 2 weeks {current_month}"
+            logging.info(f"   ✅ Successfully generated {len(queries)} queries")
             
+            # Log generated queries
+            logging.info("   📋 Generated queries:")
+            for i, query in enumerate(queries, 1):
+                logging.info(f"      {i:2d}. {query}")
+            
+        except json.JSONDecodeError as e:
+            logging.error(f"   ❌ JSON parsing failed: {e}")
+            logging.error(f"   📄 Content that failed to parse: {content[:500]}")
+            logging.warning("   🔄 Falling back to predefined queries")
+            
+            # Enhanced fallback queries focused on recent news
             queries = [
-                # Broad AI developments - but specific
-                f"AI announcements {two_weeks_str} article",
-                f"artificial intelligence news latest {current_month} story",
-                f"AI breakthroughs past 2 weeks report",
+                # Company announcements
+                "OpenAI announces new model API",
+                "Google AI releases latest research",  
+                "Anthropic Claude model updates",
+                "Microsoft AI tools announcement",
                 
-                # Company-specific but broad
-                f"OpenAI Google Microsoft AI updates {current_month} announcement",
-                f"Anthropic Meta AI developments recent news",
-                f"AI startups launches {two_weeks_str} coverage",
+                # Developer tools  
+                "AI coding assistant launched",
+                "new AI developer framework",
+                "AI API SDK released",
+                "machine learning tools update",
                 
-                # Developer tools
-                f"AI developer tools released past 2 weeks announcement",
-                f"new AI APIs SDKs {current_month} launch",
-                f"AI coding assistants updates recent release",
-                
-                # Technical advances
-                f"AI model releases {two_weeks_str} announcement",
-                f"machine learning breakthroughs {current_month} research",
-                f"AI capabilities improvements recent development",
+                # Research breakthroughs
+                "AI research breakthrough published",
+                "artificial intelligence study results",
                 
                 # Industry trends
-                f"AI partnerships announcements {two_weeks_str} news",
-                f"AI funding investment news {current_month} report",
-                f"enterprise AI adoption {two_weeks_str} case study"
+                "AI startup funding announcement", 
+                "artificial intelligence partnership news"
+            ]
+            
+        except ValueError as e:
+            logging.error(f"   ❌ Query validation failed: {e}")
+            logging.warning("   🔄 Falling back to predefined queries")
+            
+            queries = [
+                "OpenAI announces new model API",
+                "Google AI releases latest research",  
+                "Anthropic Claude model updates",
+                "Microsoft AI tools announcement",
+                "AI coding assistant launched",
+                "new AI developer framework",
+                "AI API SDK released",
+                "machine learning tools update",
+                "AI research breakthrough published",
+                "artificial intelligence study results",
+                "AI startup funding announcement", 
+                "artificial intelligence partnership news"
+            ]
+            
+        except Exception as e:
+            logging.error(f"   ❌ Unexpected error in query generation: {e}")
+            logging.error(f"   🔍 Error type: {type(e).__name__}")
+            import traceback
+            logging.error(f"   📚 Full traceback: {traceback.format_exc()}")
+            logging.warning("   🔄 Falling back to predefined queries")
+            
+            queries = [
+                "OpenAI announces new model API",
+                "Google AI releases latest research",  
+                "Anthropic Claude model updates",
+                "Microsoft AI tools announcement",
+                "AI coding assistant launched",
+                "new AI developer framework",
+                "AI API SDK released",
+                "machine learning tools update",
+                "AI research breakthrough published",
+                "artificial intelligence study results",
+                "AI startup funding announcement", 
+                "artificial intelligence partnership news"
             ]
         
+        generation_duration = time.time() - generation_start_time
+        
+        # Update state
         state["search_queries"] = queries
         state["search_results"] = []
-        state["report_date_range"] = f"{two_weeks_ago.strftime('%B %d')} - {current_date.strftime('%B %d, %Y')}"
+        state["report_date_range"] = f"{one_week_ago.strftime('%B %d')} - {current_date.strftime('%B %d, %Y')}"
         state["iteration_count"] = 0
         state["reflection_feedback"] = ""
         state["quality_score"] = 0.0
         state["needs_improvement"] = False
         state["improvement_areas"] = []
         
+        logging.info(f"✅ Query generation completed in {generation_duration:.2f}s")
+        logging.info(f"   📊 Final query count: {len(queries)}")
+        logging.info(f"   📅 Date range set: {state['report_date_range']}")
+        
         return state
     
     def research_ai_trends(self, state: AgentState) -> AgentState:
-        """Execute comprehensive AI trends research using natural language terms with preference for specified sources"""
+        """Execute enhanced AI trends research using improved search service"""
+        research_start_time = time.time()
+        
         base_queries = state["search_queries"]
         all_results = []
         
-        # PRIORITY 1: Search with natural language terms from specified sources (highest priority)
-        for source_category, search_terms in self.natural_search_terms.items():
-            # Use fewer terms per source to reduce timeout risk
-            for term in search_terms[:2]:  # Reduced from 3 to 2
-                try:
-                    # Add time context and site-specific search to get actual articles
-                    if source_category in ['huggingface.co', 'github.com']:
-                        # For code/model repositories, search for releases and updates
-                        time_aware_query = f"{term} new release update announcement past 2 weeks"
-                    elif source_category in ['openai.com', 'blog.anthropic.com', 'ai.googleblog.com']:
-                        # For company blogs, search for technical announcements
-                        time_aware_query = f"{term} announcement blog post API past 2 weeks"
-                    else:
-                        # General search with time context
-                        time_aware_query = f"{term} recent news past 2 weeks"
-                    
-                    source_results = self.search_service.search_ai_content(time_aware_query)
-                    # Mark these results as from preferred sources
-                    for result in source_results:
-                        result['from_preferred_source'] = True
-                        result['source_category'] = source_category
-                        # Validate URL quality more strictly
-                        url = result.get('url', '')
-                        if url and self._is_valid_article_url(url):
-                            result['url_quality'] = 'good'
-                        else:
-                            result['url_quality'] = 'poor'
-                    all_results.extend(source_results)
-                    
-                    # Reduced delay to speed up processing
-                    import time
-                    time.sleep(0.1)
-                    
-                except Exception as e:
-                    logging.warning(f"Search failed for preferred source term '{term}': {e}")
-                    continue
+        logging.info("🔍 Starting AI trends research")
+        logging.info(f"   📋 Base queries to process: {len(base_queries)}")
+        logging.info(f"   🎯 Search method: Enhanced AI news search")
         
-        # PRIORITY 2: Search with base queries + specific tool searches
-        enhanced_queries = base_queries + [
-            "new AI development tools past 2 weeks",
-            "AI API releases past 2 weeks",
-            "open source AI frameworks updates recent",
-            "AI model releases past 2 weeks",
-            "AI coding tools update recent",
-            "machine learning libraries announcements",
-            "AI platform announcements past 2 weeks"
-        ]
+        # Track research statistics
+        research_stats = {
+            'queries_processed': 0,
+            'queries_successful': 0,
+            'queries_failed': 0,
+            'total_results': 0,
+            'supplementary_results': 0
+        }
         
-        for query in enhanced_queries:
+        # Use the enhanced search service for each query
+        for i, query in enumerate(base_queries, 1):
+            research_stats['queries_processed'] += 1
+            
+            logging.info(f"   🔍 Processing query {i}/{len(base_queries)}: '{query}'")
+            
             try:
-                general_results = self.search_service.search_ai_content(query)
-                # Mark these as general results
-                for result in general_results:
-                    result['from_preferred_source'] = False
-                    # Validate URL quality for general results too
-                    url = result.get('url', '')
-                    if url and self._is_valid_article_url(url):
-                        result['url_quality'] = 'good'
-                    else:
-                        result['url_quality'] = 'poor'
-                all_results.extend(general_results)
+                query_start_time = time.time()
                 
-                # Reduced delay to speed up processing
-                import time
-                time.sleep(0.2)
+                # Use the new enhanced search method
+                query_results = self.search_service.search_recent_ai_news(query, days_back=7)
+                
+                query_duration = time.time() - query_start_time
+                
+                # Mark results with query metadata
+                for result in query_results:
+                    result['search_query'] = query
+                    result['from_enhanced_search'] = True
+                    result['query_index'] = i
+                
+                all_results.extend(query_results)
+                research_stats['queries_successful'] += 1
+                research_stats['total_results'] += len(query_results)
+                
+                logging.info(f"      ✅ Retrieved {len(query_results)} results in {query_duration:.2f}s")
+                
+                # Rate limiting
+                time.sleep(0.3)
                 
             except Exception as e:
-                logging.warning(f"Search failed for query '{query}': {e}")
+                research_stats['queries_failed'] += 1
+                logging.error(f"      ❌ Enhanced search failed for query '{query}': {e}")
+                logging.error(f"         🔍 Error type: {type(e).__name__}")
                 continue
         
-
+        logging.info(f"   📊 Base query results: {research_stats['total_results']} from {research_stats['queries_successful']}/{len(base_queries)} successful queries")
         
-        # Filter, rank and deduplicate results with frequency-based scoring
-        filtered_results = self._filter_and_rank_results_with_frequency(all_results)
+        # Add some supplementary searches for broader coverage
+        supplementary_queries = [
+            "AI breakthrough research",
+            "machine learning model release",
+            "artificial intelligence startup funding",
+            "AI developer tools update"
+        ]
+        
+        logging.info(f"   🔄 Running {len(supplementary_queries)} supplementary searches")
+        
+        for i, supp_query in enumerate(supplementary_queries, 1):
+            logging.info(f"      🔍 Supplementary search {i}/{len(supplementary_queries)}: '{supp_query}'")
+            
+            try:
+                supp_start_time = time.time()
+                
+                supp_results = self.search_service.search_recent_ai_news(supp_query, days_back=7)
+                
+                supp_duration = time.time() - supp_start_time
+                
+                for result in supp_results:
+                    result['search_query'] = supp_query
+                    result['from_enhanced_search'] = True
+                    result['supplementary'] = True
+                
+                all_results.extend(supp_results)
+                research_stats['supplementary_results'] += len(supp_results)
+                
+                logging.info(f"         ✅ Retrieved {len(supp_results)} supplementary results in {supp_duration:.2f}s")
+                
+                time.sleep(0.3)
+                
+            except Exception as e:
+                logging.warning(f"         ❌ Supplementary search failed for query '{supp_query}': {e}")
+                continue
+        
+        logging.info(f"   📊 Supplementary results: {research_stats['supplementary_results']}")
+        logging.info(f"   📊 Total raw results collected: {len(all_results)}")
+        
+        # Analyze result distribution by source type
+        source_type_analysis = {}
+        for result in all_results:
+            source_type = result.get('source_type', 'unknown')
+            source_type_analysis[source_type] = source_type_analysis.get(source_type, 0) + 1
+        
+        logging.info(f"   📈 Source type distribution:")
+        for source_type, count in source_type_analysis.items():
+            percentage = (count / len(all_results)) * 100 if all_results else 0
+            logging.info(f"      {source_type}: {count} ({percentage:.1f}%)")
+        
+        # Enhanced filtering and ranking with new metrics
+        logging.info(f"   🔧 Starting result filtering and ranking")
+        filter_start_time = time.time()
+        
+        filtered_results = self._filter_and_rank_enhanced_results(all_results)
+        
+        filter_duration = time.time() - filter_start_time
+        research_duration = time.time() - research_start_time
+        
         state["search_results"] = filtered_results
         
-        logging.info(f"Collected {len(filtered_results)} filtered results from {len(all_results)} total results")
+        # Final statistics
+        logging.info(f"✅ AI trends research completed in {research_duration:.2f}s")
+        logging.info(f"   📊 Research summary:")
+        logging.info(f"      Total queries processed: {research_stats['queries_processed']}")
+        logging.info(f"      Successful queries: {research_stats['queries_successful']}")
+        logging.info(f"      Failed queries: {research_stats['queries_failed']}")
+        logging.info(f"      Raw results collected: {len(all_results)}")
+        logging.info(f"      Final filtered results: {len(filtered_results)}")
+        logging.info(f"      Filtering efficiency: {(len(filtered_results)/max(len(all_results), 1)*100):.1f}%")
+        logging.info(f"      Filter processing time: {filter_duration:.2f}s")
+        
+        # Quality analysis of final results
+        if filtered_results:
+            quality_dist = {}
+            for result in filtered_results:
+                quality = result.get('url_quality', 'unknown')
+                quality_dist[quality] = quality_dist.get(quality, 0) + 1
+            
+            logging.info(f"   🏆 Final result quality distribution:")
+            for quality, count in quality_dist.items():
+                percentage = (count / len(filtered_results)) * 100
+                logging.info(f"      {quality}: {count} ({percentage:.1f}%)")
+        
         return state
     
 
@@ -930,7 +812,117 @@ class AITrendsReporter:
     
 
     
+    def _filter_and_rank_enhanced_results(self, results: List[Dict]) -> List[Dict]:
+        """Enhanced filtering and ranking using new search service metrics"""
+        filtered_results = []
+        seen_urls = set()
+        domain_counts = {}
+        
+        # Sort by relevance score from search service if available, otherwise use manual scoring
+        def sort_key(result):
+            relevance = result.get('relevance_score', self._calculate_manual_relevance(result))
+            url_quality = result.get('url_quality', 'basic')
+            source_type = result.get('source_type', 'general')
+            
+            # Priority scoring
+            quality_score = {'high': 3, 'medium': 2, 'basic': 1}.get(url_quality, 1)
+            type_score = {'official': 3, 'news': 2, 'general': 1}.get(source_type, 1)
+            
+            return (type_score, quality_score, relevance)
+        
+        sorted_results = sorted(results, key=sort_key, reverse=True)
+        
+        for result in sorted_results:
+            url = result.get('url', '')
+            domain = result.get('source', '').lower()
+            
+            # Skip duplicates
+            if url in seen_urls:
+                continue
+            
+            # Skip excluded domains
+            excluded_domains = ['reddit.com', 'quora.com', 'stackoverflow.com', 'linkedin.com']
+            if any(excluded in domain for excluded in excluded_domains):
+                continue
+            
+            # Validate content quality
+            if not self._is_quality_ai_content(result):
+                continue
+            
+            # Limit results per domain for diversity
+            domain_count = domain_counts.get(domain, 0)
+            max_per_domain = 4 if result.get('source_type') == 'official' else 2
+            
+            if domain_count >= max_per_domain:
+                continue
+            
+            seen_urls.add(url)
+            domain_counts[domain] = domain_count + 1
+            filtered_results.append(result)
+            
+            # Limit total results
+            if len(filtered_results) >= 40:
+                break
+        
+        logging.info(f"Enhanced filtering: {len(filtered_results)} quality results from {len(domain_counts)} sources")
+        return filtered_results
+    
+    def _calculate_manual_relevance(self, result: Dict) -> float:
+        """Calculate relevance score manually if not provided by search service"""
+        score = 0.0
+        
+        # Enhanced AI keywords
+        ai_keywords = [
+            'ai', 'artificial intelligence', 'machine learning', 'deep learning',
+            'neural network', 'llm', 'gpt', 'claude', 'gemini', 'chatgpt', 
+            'anthropic', 'openai', 'google ai', 'microsoft ai',
+            'transformer', 'generative ai', 'foundation model'
+        ]
+        
+        title = result.get('title', '').lower()
+        snippet = result.get('snippet', '').lower()
+        
+        # Title relevance (higher weight)
+        score += sum(8 for keyword in ai_keywords if keyword in title)
+        
+        # Snippet relevance
+        score += sum(3 for keyword in ai_keywords if keyword in snippet)
+        
+        # Recent news indicators
+        news_indicators = ['announces', 'releases', 'launches', 'introduces', 'unveils', 'breakthrough']
+        score += sum(5 for indicator in news_indicators if indicator in title.lower())
+        
+        return score
+    
+    def _is_quality_ai_content(self, result: Dict) -> bool:
+        """Check if result contains quality AI content"""
+        title = result.get('title', '').lower()
+        snippet = result.get('snippet', '').lower()
+        url = result.get('url', '')
+        
+        # Must contain AI-related terms
+        ai_terms = ['ai', 'artificial intelligence', 'machine learning', 'neural', 'llm', 'gpt']
+        has_ai_content = any(term in title or term in snippet for term in ai_terms)
+        
+        if not has_ai_content:
+            return False
+        
+        # Skip generic or low-quality content
+        skip_terms = ['tutorial', 'course', 'learning', 'guide', 'how to', 'beginner']
+        if any(term in title for term in skip_terms):
+            return False
+        
+        # Must have reasonable URL
+        if not url or len(url) < 20:
+            return False
+        
+        return True
+
     def _filter_and_rank_results_with_frequency(self, results: List[Dict]) -> List[Dict]:
+        """Legacy method - redirects to enhanced filtering"""
+        return self._filter_and_rank_enhanced_results(results)
+        
+    def _legacy_filter_and_rank_results_with_frequency(self, results: List[Dict]) -> List[Dict]:
         """Filter and rank results by relevance, quality, and frequency with preference for specified sources"""
         # Enhanced AI keywords including technical terms
         ai_keywords = [
@@ -1124,7 +1116,6 @@ class AITrendsReporter:
         Validate and improve URLs by re-searching article titles to find actual article URLs.
         This ensures we get direct links to articles rather than search pages or constructed URLs.
         """
-        import time
         
         improved_content = {}
         
@@ -1300,7 +1291,6 @@ class AITrendsReporter:
         Re-rank articles within each category by searching for their popularity and relevance.
         This helps prioritize more widely covered and important stories.
         """
-        import time
         
         re_ranked_content = {}
         
@@ -1703,13 +1693,42 @@ class AITrendsReporter:
         return fixed_report
 
 def should_continue_iteration(state: AgentState) -> str:
-    """Routing function to determine if another iteration is needed"""
-    needs_improvement = state.get("needs_improvement", False)
+    """Determine whether to continue with another iteration or generate the final report"""
+    
     iteration_count = state.get("iteration_count", 0)
+    quality_score = state.get("quality_score", 0.0)
+    needs_improvement = state.get("needs_improvement", False)
+    improvement_areas = state.get("improvement_areas", [])
+    
+    logging.info("")
+    logging.info("🤔 DECISION POINT: Continue Iteration or Generate Report?")
+    logging.info("-" * 50)
+    logging.info(f"   📊 Current Quality Score: {quality_score:.1f}/10")
+    logging.info(f"   🔄 Current Iteration: {iteration_count}")
+    logging.info(f"   📈 Needs Improvement: {'YES' if needs_improvement else 'NO'}")
+    
+    if improvement_areas:
+        logging.info(f"   📝 Improvement Areas:")
+        for area in improvement_areas[:3]:
+            logging.info(f"      • {area}")
     
     if needs_improvement and iteration_count < 2:
+        logging.info("")
+        logging.info("🔄 DECISION: IMPROVE SEARCH")
+        logging.info("   ➡️  Quality below threshold, attempting improvement")
+        logging.info("   🎯 Next: Refine search strategy and re-research")
         return "improve_search"
     else:
+        if iteration_count >= 2:
+            logging.info("")
+            logging.info("✅ DECISION: GENERATE REPORT")
+            logging.info("   ➡️  Maximum iterations reached, proceeding with current results")
+        else:
+            logging.info("")
+            logging.info("✅ DECISION: GENERATE REPORT")
+            logging.info("   ➡️  Quality acceptable, proceeding to final report")
+        
+        logging.info("   🎯 Next: Generate weekly report")
         return "generate_report"
 
 # Main graph construction function (this is what LangGraph will use)
@@ -1724,16 +1743,153 @@ def create_graph():
     # Initialize the reporter
     reporter = AITrendsReporter(gemini_api_key=gemini_api_key)
     
+    # Enhanced workflow logging
+    def log_workflow_step(step_name: str, description: str, step_num: int, total_steps: int):
+        """Log workflow progress with visual indicators"""
+        progress = f"[{step_num}/{total_steps}]"
+        logging.info(f"")
+        logging.info(f"🚀 WORKFLOW STEP {progress}: {step_name.upper()}")
+        logging.info(f"📝 {description}")
+        logging.info(f"⏰ Started at: {datetime.now().strftime('%H:%M:%S')}")
+        logging.info(f"{'='*60}")
+    
+    # Wrap each node function with enhanced logging
+    def wrapped_generate_queries(state: AgentState) -> AgentState:
+        log_workflow_step("Generate Queries", "Creating optimized search queries for AI trends", 1, 6)
+        start_time = time.time()
+        try:
+            result = reporter.generate_ai_weekly_queries(state)
+            duration = time.time() - start_time
+            logging.info(f"✅ STEP 1 COMPLETED in {duration:.2f}s")
+            logging.info(f"   📊 Generated {len(result.get('search_queries', []))} search queries")
+            logging.info(f"   📅 Date range: {result.get('report_date_range', 'unknown')}")
+            return result
+        except Exception as e:
+            logging.error(f"❌ STEP 1 FAILED after {time.time() - start_time:.2f}s: {e}")
+            raise
+    
+    def wrapped_research(state: AgentState) -> AgentState:
+        log_workflow_step("Research Trends", "Searching for AI developments across multiple sources", 2, 6)
+        start_time = time.time()
+        try:
+            result = reporter.research_ai_trends(state)
+            duration = time.time() - start_time
+            logging.info(f"✅ STEP 2 COMPLETED in {duration:.2f}s")
+            logging.info(f"   📊 Found {len(result.get('search_results', []))} total articles")
+            
+            # Show source breakdown
+            sources = {}
+            for article in result.get('search_results', []):
+                domain = urlparse(article.get('link', '')).netloc
+                sources[domain] = sources.get(domain, 0) + 1
+            
+            if sources:
+                logging.info(f"   🌐 Top sources:")
+                for i, (domain, count) in enumerate(sorted(sources.items(), key=lambda x: x[1], reverse=True)[:5], 1):
+                    logging.info(f"      {i}. {domain}: {count} articles")
+            
+            return result
+        except Exception as e:
+            logging.error(f"❌ STEP 2 FAILED after {time.time() - start_time:.2f}s: {e}")
+            raise
+    
+    def wrapped_analyze(state: AgentState) -> AgentState:
+        log_workflow_step("Analyze Trends", "Processing articles and identifying key AI trends", 3, 6)
+        start_time = time.time()
+        try:
+            result = reporter.analyze_trends_with_developer_impact(state)
+            duration = time.time() - start_time
+            logging.info(f"✅ STEP 3 COMPLETED in {duration:.2f}s")
+            
+            # Show analysis results
+            analysis = result.get('trend_analysis', {})
+            trends = analysis.get('trends', [])
+            logging.info(f"   📈 Identified {len(trends)} major trends")
+            
+            for i, trend in enumerate(trends[:3], 1):
+                title = trend.get('headline', 'Unknown Trend')
+                logging.info(f"      {i}. {title}")
+            
+            return result
+        except Exception as e:
+            logging.error(f"❌ STEP 3 FAILED after {time.time() - start_time:.2f}s: {e}")
+            raise
+    
+    def wrapped_reflect(state: AgentState) -> AgentState:
+        log_workflow_step("Quality Reflection", "Evaluating content quality and completeness", 4, 6)
+        start_time = time.time()
+        try:
+            result = reporter.reflect_on_quality(state)
+            duration = time.time() - start_time
+            logging.info(f"✅ STEP 4 COMPLETED in {duration:.2f}s")
+            
+            quality_score = result.get('quality_score', 0)
+            needs_improvement = result.get('needs_improvement', False)
+            iteration_count = result.get('iteration_count', 0)
+            
+            logging.info(f"   ⭐ Quality Score: {quality_score:.1f}/10")
+            logging.info(f"   🔄 Iteration: {iteration_count + 1}")
+            
+            if needs_improvement:
+                logging.info(f"   🔧 Needs Improvement: YES")
+                improvements = result.get('improvement_areas', [])
+                if improvements:
+                    logging.info(f"   📝 Areas to improve:")
+                    for improvement in improvements[:3]:
+                        logging.info(f"      • {improvement}")
+            else:
+                logging.info(f"   ✅ Quality: Acceptable, proceeding to report generation")
+            
+            return result
+        except Exception as e:
+            logging.error(f"❌ STEP 4 FAILED after {time.time() - start_time:.2f}s: {e}")
+            raise
+    
+    def wrapped_improve_search(state: AgentState) -> AgentState:
+        log_workflow_step("Improve Search", "Refining search strategy based on quality feedback", 5, 6)
+        start_time = time.time()
+        try:
+            result = reporter.improve_search_strategy(state)
+            duration = time.time() - start_time
+            logging.info(f"✅ STEP 5 COMPLETED in {duration:.2f}s")
+            logging.info(f"   🔄 Returning to research with improved strategy")
+            return result
+        except Exception as e:
+            logging.error(f"❌ STEP 5 FAILED after {time.time() - start_time:.2f}s: {e}")
+            raise
+    
+    def wrapped_generate_report(state: AgentState) -> AgentState:
+        log_workflow_step("Generate Report", "Creating final AI trends weekly report", 6, 6)
+        start_time = time.time()
+        try:
+            result = reporter.generate_weekly_report(state)
+            duration = time.time() - start_time
+            logging.info(f"✅ STEP 6 COMPLETED in {duration:.2f}s")
+            
+            export_path = result.get('export_path', 'unknown')
+            report_length = len(result.get('weekly_report', ''))
+            
+            logging.info(f"   📄 Report generated: {report_length:,} characters")
+            logging.info(f"   💾 Saved to: {export_path}")
+            logging.info(f"")
+            logging.info(f"🎉 WORKFLOW COMPLETED SUCCESSFULLY!")
+            logging.info(f"{'='*60}")
+            
+            return result
+        except Exception as e:
+            logging.error(f"❌ STEP 6 FAILED after {time.time() - start_time:.2f}s: {e}")
+            raise
+    
     # Build the workflow with reflection mechanism
     workflow = StateGraph(AgentState)
     
-    # Add nodes - using trend analysis without categories
-    workflow.add_node("generate_queries", reporter.generate_ai_weekly_queries)
-    workflow.add_node("research", reporter.research_ai_trends)
-    workflow.add_node("analyze", reporter.analyze_trends_with_developer_impact)
-    workflow.add_node("reflect", reporter.reflect_on_quality)
-    workflow.add_node("improve_search", reporter.improve_search_strategy)
-    workflow.add_node("generate_report", reporter.generate_weekly_report)
+    # Add nodes with wrapped functions
+    workflow.add_node("generate_queries", wrapped_generate_queries)
+    workflow.add_node("research", wrapped_research)
+    workflow.add_node("analyze", wrapped_analyze)
+    workflow.add_node("reflect", wrapped_reflect)
+    workflow.add_node("improve_search", wrapped_improve_search)
+    workflow.add_node("generate_report", wrapped_generate_report)
     
     # Add edges
     workflow.set_entry_point("generate_queries")

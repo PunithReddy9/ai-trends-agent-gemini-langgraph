@@ -667,15 +667,6 @@ class AITrendsReporter:
         # Recent AI Trends and Advancements
         ## {date_range}
         
-        ### Executive Summary
-        
-        • [First key trend - one line, max 20 words]
-        • [Second key trend - one line, max 20 words]
-        • [Third key trend - one line, max 20 words]
-        • [Continue for all major trends...]
-        • [Overall direction/conclusion - one line, max 25 words]
-        
-        ---
         
         [For each trend, create a section - aim for 150-200 words per trend:]
         
@@ -702,10 +693,8 @@ class AITrendsReporter:
         - Balance technical accuracy with accessibility
         
         REMEMBER: 
-        1. Executive Summary uses bullet points, not paragraphs
-        2. Keep each bullet point under 20 words
-        3. Total report should be 1000-1200 words
-        4. NO links in main text - only in Sources sections
+        1. Total report should be 1000-1200 words
+        2. NO links in main text - only in Sources sections
         """
         
         try:
@@ -750,16 +739,6 @@ class AITrendsReporter:
         
         report = f"""# Recent AI Trends and Advancements
 ## {date_range}
-
-### Executive Summary
-
-• Autonomous AI agents revolutionizing software development workflows
-• AI coding assistants showing mixed productivity impacts
-• New efficient AI architectures democratizing advanced capabilities
-• Enterprise AI adoption accelerating across traditional industries
-• Geopolitical tensions shaping AI hardware availability globally
-
----
 
 """
         

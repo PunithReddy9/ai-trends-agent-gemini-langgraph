@@ -71,7 +71,6 @@ SYNTHESIS REQUIREMENTS:
 - Current date: {current_date}
 
 OUTPUT FORMAT:
-- Begin with a brief executive summary (2-3 sentences)
 - Organize main content into clear sections with descriptive headings
 - Include source attribution for all major claims
 - End with a note about information freshness and any limitations

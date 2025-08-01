@@ -178,20 +178,34 @@ class GoogleSearchService:
         
         all_results = []
         
-        # Define high-quality news sources for AI
-        news_sources = [
+        # Define high-quality tech news sources for AI
+        tech_news_sources = [
             "techcrunch.com",
             "venturebeat.com", 
             "theverge.com",
             "wired.com",
             "arstechnica.com",
-            "reuters.com",
             "zdnet.com",
             "infoworld.com",
-            "technologyreview.mit.edu"
+            "technologyreview.mit.edu",
+            "ieee.org",
+            "spectrum.ieee.org",
+            "hackernews.ycombinator.com"
         ]
         
-        # Define official AI company blogs
+        # Define business and mainstream news sources
+        business_news_sources = [
+            "reuters.com",
+            "bloomberg.com",
+            "wsj.com",
+            "ft.com",
+            "cnbc.com",
+            "fortune.com",
+            "businessinsider.com",
+            "axios.com"
+        ]
+        
+        # Define official AI company blogs and research sites
         ai_company_blogs = [
             "openai.com",
             "blog.anthropic.com",
@@ -200,21 +214,41 @@ class GoogleSearchService:
             "ai.meta.com",
             "research.google.com",
             "developer.nvidia.com",
-            "huggingface.co"
+            "huggingface.co",
+            "deepmind.google",
+            "ai.apple.com",
+            "developer.apple.com",
+            "research.amazon.com",
+            "ai.facebook.com",
+            "blog.research.google"
+        ]
+        
+        # Define research and academic sources
+        research_sources = [
+            "arxiv.org",
+            "papers.nips.cc",
+            "openreview.net",
+            "sciencedirect.com",
+            "nature.com",
+            "science.org",
+            "acm.org",
+            "ieeexplore.ieee.org"
         ]
         
         current_date = datetime.now()
         date_filter = f"after:{(current_date - timedelta(days=days_back)).strftime('%Y-%m-%d')}"
         
         logging.info(f"   📅 Date filter: {date_filter}")
-        logging.info(f"   🏢 Official sources to search: {len(ai_company_blogs[:4])}")
-        logging.info(f"   📰 News sources to search: {len(news_sources[:5])}")
+        logging.info(f"   🏢 Official sources to search: {len(ai_company_blogs[:8])}")
+        logging.info(f"   📰 Tech news sources to search: {len(tech_news_sources[:8])}")
+        logging.info(f"   💼 Business news sources to search: {len(business_news_sources[:6])}")
+        logging.info(f"   🎓 Research sources to search: {len(research_sources[:4])}")
         
         # Search official AI company sources first (highest priority)
         official_results = 0
-        for i, source in enumerate(ai_company_blogs[:4], 1):  # Limit to avoid rate limits
+        for i, source in enumerate(ai_company_blogs[:8], 1):  # Increased from 4 to 8
             try:
-                logging.info(f"   🏢 Searching official source {i}/4: {source}")
+                logging.info(f"   🏢 Searching official source {i}/8: {source}")
                 
                 # Simplified query - removed overly restrictive terms
                 site_query = f"site:{source} {base_query} {date_filter}"
@@ -231,11 +265,11 @@ class GoogleSearchService:
         
         logging.info(f"   📊 Total official source results: {official_results}")
         
-        # Search news sources (medium priority)
-        news_results = 0
-        for i, source in enumerate(news_sources[:5], 1):  # Limit to top news sources
+        # Search tech news sources (high priority)
+        tech_news_results = 0
+        for i, source in enumerate(tech_news_sources[:8], 1):  # Increased from 5 to 8
             try:
-                logging.info(f"   📰 Searching news source {i}/5: {source}")
+                logging.info(f"   📰 Searching tech news source {i}/8: {source}")
                 
                 # Simplified query for news sources
                 site_query = f"site:{source} {base_query} {date_filter}"
@@ -244,13 +278,55 @@ class GoogleSearchService:
                 logging.info(f"      ✅ Retrieved {len(results)} results from {source}")
                 
                 all_results.extend(results)
-                news_results += len(results)
+                tech_news_results += len(results)
                 time.sleep(0.3)
             except Exception as e:
                 logging.warning(f"      ❌ Failed to search {source}: {e}")
                 continue
         
-        logging.info(f"   📊 Total news source results: {news_results}")
+        logging.info(f"   📊 Total tech news source results: {tech_news_results}")
+        
+        # Search business news sources (medium priority)
+        business_results = 0
+        for i, source in enumerate(business_news_sources[:6], 1):  # New category
+            try:
+                logging.info(f"   💼 Searching business news source {i}/6: {source}")
+                
+                # Business-focused query
+                site_query = f"site:{source} {base_query} {date_filter}"
+                results = self._execute_single_search(site_query, source_type="business")
+                
+                logging.info(f"      ✅ Retrieved {len(results)} results from {source}")
+                
+                all_results.extend(results)
+                business_results += len(results)
+                time.sleep(0.3)
+            except Exception as e:
+                logging.warning(f"      ❌ Failed to search {source}: {e}")
+                continue
+        
+        logging.info(f"   📊 Total business news source results: {business_results}")
+        
+        # Search research sources (specialized priority)
+        research_results = 0
+        for i, source in enumerate(research_sources[:4], 1):  # New category
+            try:
+                logging.info(f"   🎓 Searching research source {i}/4: {source}")
+                
+                # Research-focused query
+                site_query = f"site:{source} {base_query} {date_filter}"
+                results = self._execute_single_search(site_query, source_type="research")
+                
+                logging.info(f"      ✅ Retrieved {len(results)} results from {source}")
+                
+                all_results.extend(results)
+                research_results += len(results)
+                time.sleep(0.3)
+            except Exception as e:
+                logging.warning(f"      ❌ Failed to search {source}: {e}")
+                continue
+        
+        logging.info(f"   📊 Total research source results: {research_results}")
         
         # General enhanced search for broader coverage
         try:
@@ -335,18 +411,25 @@ class GoogleSearchService:
         # Sort by source type priority and date
         def sort_priority(result):
             source_type = result.get('source_type', 'general')
-            priority_map = {'official': 0, 'news': 1, 'general': 2}
+            # Updated priority mapping with new source types
+            priority_map = {
+                'official': 0,      # Highest priority - company blogs
+                'research': 1,      # High priority - academic/research sources  
+                'news': 2,          # Medium-high priority - tech news
+                'business': 3,      # Medium priority - business news
+                'general': 4        # Lowest priority - general search
+            }
             
             # Parse date for sorting
             try:
                 date_str = result.get('date', '')
                 if date_str:
                     date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                    return (priority_map.get(source_type, 3), -date_obj.timestamp())
+                    return (priority_map.get(source_type, 5), -date_obj.timestamp())
             except:
                 pass
             
-            return (priority_map.get(source_type, 3), 0)
+            return (priority_map.get(source_type, 5), 0)
         
         logging.info(f"         🔄 Sorting results by priority...")
         sorted_results = sorted(results, key=sort_priority)
@@ -485,9 +568,21 @@ class GoogleSearchService:
         
         # Additional validation for known quality domains
         quality_domains = [
+            # Official AI company sources
             'openai.com', 'anthropic.com', 'googleblog.com', 'microsoft.com',
+            'ai.meta.com', 'research.google.com', 'developer.nvidia.com', 'huggingface.co',
+            'deepmind.google', 'ai.apple.com', 'developer.apple.com', 'research.amazon.com',
+            'ai.facebook.com', 'blog.research.google',
+            # Tech news sources
             'techcrunch.com', 'venturebeat.com', 'wired.com', 'arstechnica.com',
-            'reuters.com', 'theverge.com', 'zdnet.com', 'technologyreview.mit.edu'
+            'theverge.com', 'zdnet.com', 'infoworld.com', 'technologyreview.mit.edu',
+            'ieee.org', 'spectrum.ieee.org',
+            # Business news sources
+            'reuters.com', 'bloomberg.com', 'wsj.com', 'ft.com', 'cnbc.com',
+            'fortune.com', 'businessinsider.com', 'axios.com',
+            # Research sources
+            'arxiv.org', 'papers.nips.cc', 'openreview.net', 'sciencedirect.com',
+            'nature.com', 'science.org', 'acm.org', 'ieeexplore.ieee.org'
         ]
         
         is_quality_domain = any(domain in url.lower() for domain in quality_domains)
@@ -496,16 +591,29 @@ class GoogleSearchService:
 
     def _assess_url_quality(self, url: str) -> str:
         """Assess the quality of a URL for content extraction"""
-        # High quality: Official blogs and major tech news
+        # High quality: Official blogs, research sources, and major tech news
         high_quality_domains = [
+            # Official AI company sources
             'openai.com', 'anthropic.com', 'googleblog.com', 'research.google.com',
-            'blogs.microsoft.com', 'ai.meta.com', 'techcrunch.com', 'venturebeat.com'
+            'blogs.microsoft.com', 'ai.meta.com', 'developer.nvidia.com', 'huggingface.co',
+            'deepmind.google', 'ai.apple.com', 'developer.apple.com', 'research.amazon.com',
+            'ai.facebook.com', 'blog.research.google',
+            # Premium research sources
+            'arxiv.org', 'nature.com', 'science.org', 'papers.nips.cc',
+            # Top tech news
+            'techcrunch.com', 'venturebeat.com'
         ]
         
-        # Medium quality: Tech news and analysis sites
+        # Medium quality: Tech news, business news, and academic sources
         medium_quality_domains = [
-            'theverge.com', 'wired.com', 'arstechnica.com', 'reuters.com',
-            'zdnet.com', 'infoworld.com', 'technologyreview.mit.edu'
+            # Tech news sources
+            'theverge.com', 'wired.com', 'arstechnica.com', 'zdnet.com', 
+            'infoworld.com', 'technologyreview.mit.edu', 'ieee.org', 'spectrum.ieee.org',
+            # Business news sources
+            'reuters.com', 'bloomberg.com', 'wsj.com', 'ft.com', 'cnbc.com',
+            'fortune.com', 'businessinsider.com', 'axios.com',
+            # Research and academic sources
+            'openreview.net', 'sciencedirect.com', 'acm.org', 'ieeexplore.ieee.org'
         ]
         
         domain = urlparse(url).netloc.lower()
@@ -533,9 +641,13 @@ class GoogleSearchService:
         # Source type bonus
         source_type = result.get('source_type', 'general')
         if source_type == 'official':
-            score += 20
+            score += 20          # Highest bonus for official company sources
+        elif source_type == 'research':
+            score += 18          # Very high bonus for research/academic sources
         elif source_type == 'news':
-            score += 10
+            score += 21          # High bonus for tech news sources
+        elif source_type == 'business':
+            score += 10           # Medium bonus for business news sources
         
         # URL quality bonus
         url_quality = result.get('url_quality', 'basic')
